@@ -14,6 +14,7 @@ php artisan config:cache
 # services queue/scheduler dans docker-compose.yml.
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
     php artisan migrate --force
-fi
+# Lance le worker de file d'attente en tâche de fond (compatible Render Free Tier sans carte bancaire)
+php artisan queue:work --tries=1 &
 
 exec "$@"

@@ -1,8 +1,9 @@
 services:
-  # 1. Frontend Web App (React + Nginx)
+  # 1. Frontend Web App (React + Nginx - 100% Gratuit sans carte bancaire)
   - type: web
     name: cyberguard-frontend
     env: docker
+    plan: free
     dockerContext: ./frontend
     dockerfilePath: ./frontend/Dockerfile
     envVars:
@@ -12,10 +13,11 @@ services:
           name: cyberguard-backend
           property: host
 
-  # 2. Backend API (Laravel 11)
+  # 2. Backend API + Queue Worker (Laravel 11 - 100% Gratuit sans carte bancaire)
   - type: web
     name: cyberguard-backend
     env: docker
+    plan: free
     dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     envVars:
@@ -46,25 +48,3 @@ services:
         value: "true"
       - key: APP_KEY
         generateValue: true
-
-  # 3. Background Audit Queue Worker
-  - type: worker
-    name: cyberguard-queue
-    env: docker
-    dockerContext: ./backend
-    dockerfilePath: ./backend/Dockerfile
-    dockerCommand: php artisan queue:work --tries=1
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: DB_CONNECTION
-        value: sqlite
-      - key: QUEUE_CONNECTION
-        value: database
-      - key: RUN_MIGRATIONS
-        value: "false"
-      - key: APP_KEY
-        fromService:
-          type: web
-          name: cyberguard-backend
-          envVarKey: APP_KEY
