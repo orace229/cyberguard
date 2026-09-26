@@ -11,8 +11,6 @@ services:
           type: web
           name: cyberguard-backend
           property: host
-          # Append /api
-          envVarKey: RENDER_EXTERNAL_URL
 
   # 2. Backend API (Laravel 11)
   - type: web
@@ -69,4 +67,4 @@ services:
         fromService:
           type: web
           name: cyberguard-backend
-          property: host
+          envVarKey: APP_KEY
