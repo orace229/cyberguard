@@ -1,0 +1,580 @@
+\chapter{Projet de programmation}
+\label{chap:programmation}
+
+\section{Pr\'esentation du projet de programmation}
+
+La v\'erification de la s\'ecurit\'e d'un site web constitue un probl\`eme majeur pour
+les entreprises, \'ecoles et administrations b\'eninoises, particuli\`erement dans un
+contexte o\`u l'expertise en cybers\'ecurit\'e reste rare et co\^uteuse. Les m\'ethodes
+disponibles aujourd'hui -- audits professionnels payants, outils techniques
+disperss\'es et en anglais, ou absence totale de v\'erification -- ne r\'epondent pas
+au besoin d'un propri\'etaire de site qui veut simplement savoir si son site est
+s\^ur et quoi corriger. \textbf{CyberGuard B\'enin} est une plateforme web con\c{c}ue
+pour rendre ce diagnostic accessible, automatique et compr\'ehensible.
+
+\section{Pr\'esentation de la solution}
+
+Pour r\'epondre \`a la probl\'ematique de d\'emocratisation de l'audit de s\'ecurit\'e web,
+nous proposons le d\'eveloppement d'une plateforme compl\`ete utilisant les
+technologies Laravel et React. L'utilisateur cr\'ee un compte, saisit l'URL de son
+site, et la plateforme lance une s\'erie de v\'erifications non intrusives (HTTPS,
+certificat SSL, en-t\^etes de s\'ecurit\'e, exposition d'informations serveur,
+cookies). Le syst\`eme traduit ces r\'esultats techniques en un score sur 100 et un
+niveau de risque (Bon / Moyen / Faible), accompagn\'e de recommandations concr\`etes
+et compr\'ehensibles. Un rapport est g\'en\'er\'e, et l'utilisateur peut suivre
+l'\'evolution de la s\'ecurit\'e de son site dans le temps via un tableau de bord et
+un historique.
+
+\section{Analyse et mod\'elisation}
+
+\subsection{Choix technique}
+
+La mod\'elisation de ce projet s'appuie sur les diagrammes UML standard (cas
+d'utilisation, classes, objets, s\'equence), qui permettent de visualiser les
+acteurs, les interactions et la structure statique du syst\`eme avant son
+impl\'ementation. Le tableau~\ref{tab:stack} r\'esume les choix technologiques
+retenus.
+
+\begin{table}[H]
+  \centering
+  \caption{Stack technique retenue}
+  \label{tab:stack}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Couche} & \textbf{Choix} \\
+    \midrule
+    Frontend & React (Vite) \\
+    Backend & Laravel \\
+    Base de donn\'ees & MySQL (MariaDB via XAMPP) \\
+    Authentification & Laravel Sanctum \\
+    G\'en\'eration PDF & DomPDF \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{\'Etude de l'existant}
+
+Des outils comme \textbf{Mozilla Observatory} et \textbf{SSL Labs} existent d\'ej\`a
+pour analyser la s\'ecurit\'e d'un site web. Ils sont reconnus et techniquement
+solides, en s'appuyant sur des v\'erifications approfondies des en-t\^etes de
+s\'ecurit\'e et des certificats SSL/TLS.
+
+\subsection{Insuffisances}
+
+Ces outils pr\'esentent toutefois plusieurs limites dans le contexte vis\'e par
+notre projet. D'abord, ils sont exclusivement en anglais, ce qui constitue un
+frein r\'eel pour une partie du public b\'eninois. Ensuite, leurs r\'esultats restent
+tr\`es techniques~: un propri\'etaire de site non-technicien obtient une note ou une
+liste d'en-t\^etes manquants, sans traduction claire de ce que cela signifie
+concr\`etement ni de la marche \`a suivre pour corriger le probl\`eme. Enfin, ces
+outils sont dispers\'es~: v\'erifier HTTPS, le certificat SSL et les en-t\^etes de
+s\'ecurit\'e n\'ecessite souvent de passer par plusieurs services diff\'erents, sans
+suivi centralis\'e ni historique des analyses pass\'ees. CyberGuard B\'enin se
+positionne comme une alternative qui centralise ces v\'erifications, restitue un
+score unique et des recommandations en fran\c{c}ais compr\'ehensibles par un public
+non-technicien, tout en conservant un historique consultable dans le temps.
+
+\subsection{Repr\'esentation de la mod\'elisation}
+
+\subsubsection{Diagramme des cas d'utilisation}
+
+\paragraph{Identification des acteurs}
+
+Trois acteurs interagissent avec le syst\`eme (tableau~\ref{tab:acteurs}).
+
+\begin{table}[H]
+  \centering
+  \caption{Identification des acteurs}
+  \label{tab:acteurs}
+  \begin{tabular}{lp{9.5cm}}
+    \toprule
+    \textbf{Acteur} & \textbf{Description} \\
+    \midrule
+    Utilisateur & Personne disposant d'un compte sur la plateforme, propri\'etaire ou responsable d'un site web qu'elle souhaite analyser. \\
+    Administrateur & Personne charg\'ee de la gestion de la plateforme (comptes, statistiques, param\`etres de scoring). H\'erite de tous les droits de l'Utilisateur. \\
+    Syst\`eme & Acteur non-humain~: partie automatis\'ee de l'application qui ex\'ecute les v\'erifications techniques et produit les r\'esultats. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Identification des cas d'utilisation}
+
+Pour chaque acteur, les cas d'utilisation suivants ont \'et\'e identifi\'es~:
+
+\textbf{Utilisateur}
+\begin{itemize}[nosep]
+  \item G\'erer son compte (inscription, modification, r\'einitialisation du mot de passe)
+  \item S'authentifier (connexion par email/mot de passe, ou via un compte Google d\'ej\`a existant -- Google n'est jamais un moyen d'inscription)
+  \item Lancer une analyse
+  \item Consulter les rapports (historique, d\'etail, t\'el\'echargement PDF)
+  \item Consulter le tableau de bord
+  \item \^Etre notifi\'e de la fin d'une analyse (notification in-app lorsqu'une analyse lanc\'ee en arri\`ere-plan se termine)
+\end{itemize}
+\textbf{Administrateur}
+\begin{itemize}[nosep]
+  \item G\'erer les comptes utilisateurs (activer/d\'esactiver, promouvoir/r\'etrograder le r\^ole, supprimer)
+  \item Mod\'erer les analyses (consulter et supprimer l'analyse de n'importe quel utilisateur)
+  \item Administrer la plateforme (statistiques globales, param\`etres de scoring)
+\end{itemize}
+\textbf{Syst\`eme}
+\begin{itemize}[nosep]
+  \item Traiter l'analyse (v\'erifications techniques, calcul du score, g\'en\'eration du rapport, notification de l'utilisateur)
+\end{itemize}
+
+\paragraph{Tableau r\'ecapitulatif des cas d'utilisation}
+
+\begin{longtable}{clc}
+  \caption{Tableau r\'ecapitulatif des cas d'utilisation}
+  \label{tab:recap-cu} \\
+  \toprule
+  \textbf{\#} & \textbf{Cas d'utilisation} & \textbf{Acteur} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{\#} & \textbf{Cas d'utilisation} & \textbf{Acteur} \\
+  \midrule
+  \endhead
+  1 & G\'erer son compte & Utilisateur \\
+  2 & S'authentifier & Utilisateur \\
+  3 & Lancer une analyse & Utilisateur \\
+  4 & Consulter les rapports & Utilisateur \\
+  5 & Consulter le tableau de bord & Utilisateur \\
+  6 & \^Etre notifi\'e de la fin d'une analyse & Utilisateur \\
+  7 & G\'erer les comptes utilisateurs & Administrateur \\
+  8 & Mod\'erer les analyses & Administrateur \\
+  9 & Administrer la plateforme & Administrateur \\
+  10 & Traiter l'analyse & Syst\`eme \\
+  \bottomrule
+\end{longtable}
+
+\paragraph{Diagramme proprement dit}
+
+Le diagramme ci-dessous formalise les acteurs et cas d'utilisation identifi\'es,
+avec une relation de g\'en\'eralisation (Administrateur h\'erite d'Utilisateur) et
+une relation d'inclusion (\og~Lancer une analyse~\fg{} inclut \og~Traiter
+l'analyse~\fg).
+
+\TODOFigure{diagramme-cas-utilisation.jpeg}{Diagramme de cas d'utilisation}{fig:cas-utilisation}
+
+\paragraph{Description textuelle de cinq cas d'utilisation}
+
+\subparagraph{Cas d'utilisation~: G\'erer les comptes utilisateurs}
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{9.5cm}}
+    \toprule
+    Acteur principal & Administrateur \\
+    Objectif & Permettre \`a un administrateur de g\'erer les comptes des utilisateurs de la plateforme (statut, r\^ole). \\
+    Pr\'econdition & L'administrateur est authentifi\'e. \\
+    Sc\'enario nominal &
+      1. Acc\`es \`a la liste des comptes utilisateurs.
+      2. Recherche par nom/email, filtre par statut.
+      3. Activation ou d\'esactivation d'un compte.
+      4. Promotion ou r\'etrogradation du r\^ole (utilisateur $\leftrightarrow$ administrateur).
+      5. Suppression d'un compte si n\'ecessaire. \\
+    Postcondition & L'\'etat du compte cibl\'e (statut, r\^ole, ou existence) est mis \`a jour en cons\'equence. \\
+    Exception & Tentative d'un administrateur de d\'esactiver, r\'etrograder ou supprimer son propre compte $\rightarrow$ refus\'ee (garde-fou anti-auto-modification). Tentative d'acc\`es par un utilisateur non administrateur $\rightarrow$ acc\`es refus\'e. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subparagraph{Cas d'utilisation~: Lancer une analyse}
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{9.5cm}}
+    \toprule
+    Acteur principal & Utilisateur \\
+    Objectif & Permettre \`a l'utilisateur de demander l'analyse de s\'ecurit\'e d'un site web. \\
+    Pr\'econdition & L'utilisateur est authentifi\'e. \\
+    Sc\'enario nominal &
+      1. L'utilisateur saisit l'URL du site \`a analyser.
+      2. Le syst\`eme valide le format de l'URL.
+      3. Le syst\`eme d\'eclenche le cas d'utilisation \og~Traiter l'analyse~\fg.
+      4. Une confirmation de lancement est affich\'ee \`a l'utilisateur. \\
+    Postcondition & Une analyse est en cours de traitement pour le site indiqu\'e. \\
+    Exception & URL invalide ou site inaccessible $\rightarrow$ message d'erreur affich\'e, aucune analyse n'est lanc\'ee. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subparagraph{Cas d'utilisation~: Traiter l'analyse}
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{9.5cm}}
+    \toprule
+    Acteur principal & Syst\`eme \\
+    Objectif & Ex\'ecuter automatiquement les v\'erifications de s\'ecurit\'e et produire un r\'esultat exploitable. \\
+    Pr\'econdition & Le cas \og~Lancer une analyse~\fg{} a \'et\'e d\'eclench\'e avec une URL valide. \\
+    Sc\'enario nominal &
+      1. V\'erification que l'h\^ote ne pointe pas vers une ressource r\'eseau priv\'ee ou interne.
+      2. V\'erification de la pr\'esence du HTTPS.
+      3. Contr\^ole de la validit\'e du certificat SSL.
+      4. Analyse des en-t\^etes de s\'ecurit\'e HTTP.
+      5. V\'erification de la configuration des cookies (Secure, HttpOnly, SameSite).
+      6. Recherche de vuln\'erabilit\'es simples et non intrusives.
+      7. Recherche de fichiers sensibles expos\'es publiquement (.env, .git...).
+      8. V\'erification de la protection du domaine contre l'usurpation d'email (SPF/DMARC).
+      9. Calcul du score sur 100 et du niveau de risque.
+      10. G\'en\'eration des recommandations, en langage compr\'ehensible par un non-technicien.
+      11. G\'en\'eration du rapport PDF.
+      12. Enregistrement du r\'esultat en base de donn\'ees.
+      13. Notification de l'utilisateur si l'analyse \'etait suivie en arri\`ere-plan (\og~\^Etre notifi\'e de la fin d'une analyse~\fg). \\
+    Postcondition & Un rapport d'analyse (score, risque, recommandations, PDF) est disponible et associ\'e \`a l'utilisateur. \\
+    Exception & Adresse non autoris\'ee, site inaccessible ou timeout $\rightarrow$ l'analyse est marqu\'ee en \'echec avec un motif explicite, l'utilisateur est notifi\'e. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subparagraph{Cas d'utilisation~: Consulter les rapports}
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{9.5cm}}
+    \toprule
+    Acteur principal & Utilisateur \\
+    Objectif & Permettre \`a l'utilisateur de revoir ses analyses pass\'ees et d'en r\'ecup\'erer le d\'etail. \\
+    Pr\'econdition & L'utilisateur est authentifi\'e et poss\`ede au moins une analyse termin\'ee. \\
+    Sc\'enario nominal &
+      1. L'utilisateur acc\`ede \`a son historique d'analyses.
+      2. Le syst\`eme affiche la liste des analyses (date, site, score, niveau de risque).
+      3. L'utilisateur s\'electionne une analyse.
+      4. Le syst\`eme affiche le d\'etail du rapport.
+      5. L'utilisateur peut t\'el\'echarger le rapport au format PDF. \\
+    Postcondition & L'utilisateur a consult\'e ou t\'el\'echarg\'e le rapport souhait\'e. \\
+    Exception & Aucune analyse enregistr\'ee $\rightarrow$ message indiquant qu'aucun historique n'est disponible. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subparagraph{Cas d'utilisation~: Mod\'erer les analyses}
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{9.5cm}}
+    \toprule
+    Acteur principal & Administrateur \\
+    Objectif & Permettre \`a un administrateur de superviser l'ensemble des analyses de la plateforme, tous utilisateurs confondus, et d'en supprimer une si n\'ecessaire. \\
+    Pr\'econdition & L'administrateur est authentifi\'e. \\
+    Sc\'enario nominal &
+      1. Acc\`es \`a la liste globale des analyses.
+      2. Affichage de toutes les analyses avec leur propri\'etaire, ind\'ependamment de l'utilisateur connect\'e.
+      3. Recherche par URL ou par propri\'etaire, filtre par niveau de risque.
+      4. Consultation du d\'etail d'une analyse.
+      5. Suppression de l'analyse (et de son rapport PDF associ\'e) si n\'ecessaire. \\
+    Postcondition & La liste refl\`ete l'\'etat courant des analyses~; une analyse supprim\'ee n'est plus consultable. \\
+    Exception & Tentative d'acc\`es par un utilisateur non administrateur $\rightarrow$ acc\`es refus\'e. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Diagramme des classes}
+
+Un diagramme de classes est un diagramme UML qui repr\'esente la structure
+statique d'un syst\`eme logiciel en mod\'elisant les classes avec leurs attributs,
+m\'ethodes et les relations qui les lient. Chaque classe est visualis\'ee sous forme
+d'un rectangle divis\'e en trois sections (nom, attributs, m\'ethodes). Les relations
+entre classes (association, h\'eritage, agr\'egation, d\'ependance) sont
+repr\'esent\'ees par diff\'erents types de fl\`eches et de lignes.
+
+\paragraph{Identification des classes}
+\begin{itemize}
+  \item Utilisateur
+  \item Administrateur
+  \item Analyse
+  \item Controle
+  \item ParametreScore
+\end{itemize}
+
+\paragraph{R\`egles de gestion}
+\textbf{Utilisateur}
+\begin{itemize}[nosep]
+  \item Un Utilisateur peut lancer plusieurs Analyses.
+  \item Un Administrateur h\'erite de tous les droits d'un Utilisateur (g\'en\'eralisation).
+\end{itemize}
+\textbf{Analyse}
+\begin{itemize}[nosep]
+  \item Une Analyse est lanc\'ee par un seul Utilisateur.
+  \item Une Analyse contient plusieurs Controles (r\'esultats de v\'erification).
+  \item Une Analyse a un statut \'evolutif (en\_cours, terminee, echec).
+  \item Un Administrateur peut consulter et supprimer n'importe quelle Analyse, sans restriction de propri\'etaire (mod\'eration).
+\end{itemize}
+\textbf{Controle}
+\begin{itemize}[nosep]
+  \item Un Controle est toujours li\'e \`a une seule Analyse.
+  \item Un Controle a un statut (conforme / non\_conforme) et peut porter une recommandation.
+\end{itemize}
+\textbf{ParametreScore}
+\begin{itemize}[nosep]
+  \item Il n'existe qu'une seule instance de ParametreScore (configuration globale, singleton).
+  \item Un Administrateur peut configurer les param\`etres de score (\og~configure~\fg).
+\end{itemize}
+
+\paragraph{Dictionnaire des donn\'ees}
+
+Le dictionnaire des donn\'ees ci-dessous recense, pour chaque table de la base de
+donn\'ees, l'ensemble des champs, leur type SQL, leur taille et leur r\^ole (cf.
+\texttt{schema.sql}).
+
+\begin{table}[H]
+  \centering
+  \caption{Dictionnaire des donn\'ees -- table \texttt{utilisateurs}}
+  \begin{tabular}{lllp{6cm}}
+    \toprule
+    \textbf{Champ} & \textbf{Type} & \textbf{Taille} & \textbf{Description} \\
+    \midrule
+    id & BIGINT UNSIGNED & -- & Identifiant unique de l'utilisateur \\
+    nom & VARCHAR & 150 & Nom complet de l'utilisateur \\
+    email & VARCHAR & 190 & Adresse email (identifiant de connexion) \\
+    mot\_de\_passe & VARCHAR & 255 & Mot de passe hach\'e \\
+    role & ENUM & -- & \texttt{utilisateur} / \texttt{administrateur} \\
+    statut & ENUM & -- & \texttt{actif} / \texttt{desactive} \\
+    date\_inscription & TIMESTAMP & -- & Date de cr\'eation du compte \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Dictionnaire des donn\'ees -- table \texttt{analyses}}
+  \begin{tabular}{lllp{6cm}}
+    \toprule
+    \textbf{Champ} & \textbf{Type} & \textbf{Taille} & \textbf{Description} \\
+    \midrule
+    id & BIGINT UNSIGNED & -- & Identifiant unique de l'analyse \\
+    utilisateur\_id & BIGINT UNSIGNED & -- & R\'ef\'erence vers l'utilisateur propri\'etaire \\
+    url & VARCHAR & 255 & URL du site analys\'e \\
+    date\_analyse & TIMESTAMP & -- & Date de lancement de l'analyse \\
+    score & TINYINT UNSIGNED & -- & Score obtenu sur 100 \\
+    niveau\_risque & ENUM & -- & \texttt{bon} / \texttt{moyen} / \texttt{faible} \\
+    statut & ENUM & -- & \texttt{en\_cours} / \texttt{terminee} / \texttt{echec} \\
+    chemin\_rapport\_pdf & VARCHAR & 255 & Chemin du rapport PDF g\'en\'er\'e \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Dictionnaire des donn\'ees -- table \texttt{controles}}
+  \begin{tabular}{lllp{6cm}}
+    \toprule
+    \textbf{Champ} & \textbf{Type} & \textbf{Taille} & \textbf{Description} \\
+    \midrule
+    id & BIGINT UNSIGNED & -- & Identifiant unique du contr\^ole \\
+    analyse\_id & BIGINT UNSIGNED & -- & R\'ef\'erence vers l'analyse concern\'ee \\
+    type & VARCHAR & 50 & https, certificat\_ssl, en\_tetes\_securite, cookies, vulnerabilites, fichiers\_exposes, email\_securise \\
+    statut & ENUM & -- & \texttt{conforme} / \texttt{non\_conforme} \\
+    description & TEXT & -- & D\'etail du constat \\
+    recommandation & TEXT & -- & Recommandation de correction (si non conforme) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Dictionnaire des donn\'ees -- table \texttt{parametres\_score}}
+  \begin{tabular}{lllp{6cm}}
+    \toprule
+    \textbf{Champ} & \textbf{Type} & \textbf{Taille} & \textbf{Description} \\
+    \midrule
+    id & TINYINT UNSIGNED & -- & Identifiant fixe (toujours 1, ligne unique) \\
+    poids\_https & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere HTTPS \\
+    poids\_certificat\_ssl & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere certificat SSL \\
+    poids\_headers & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere en-t\^etes \\
+    poids\_cookies & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere cookies \\
+    poids\_vulnerabilites & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere vuln\'erabilit\'es \\
+    poids\_fichiers\_exposes & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere fichiers expos\'es \\
+    poids\_email\_securise & TINYINT UNSIGNED & -- & Pond\'eration du crit\`ere s\'ecurit\'e email (SPF/DMARC) \\
+    seuil\_bon & TINYINT UNSIGNED & -- & Seuil de score pour le niveau \og~bon~\fg \\
+    seuil\_moyen & TINYINT UNSIGNED & -- & Seuil de score pour le niveau \og~moyen~\fg \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Diagramme de classes}
+
+\TODOFigure{diagramme-classes.jpeg}{Diagramme de classes}{fig:classes}
+
+\subsubsection{Diagramme d'objet}
+
+Le diagramme d'objets ci-dessous illustre une instanciation concr\`ete du
+diagramme de classes~: un utilisateur ayant lanc\'e une analyse termin\'ee avec
+trois contr\^oles, et le bar\`eme de score en vigueur, configur\'e par un
+administrateur.
+
+\TODOFigure{diagramme-objets.jpeg}{Diagramme d'objets}{fig:objets}
+
+\subsubsection{Diagrammes de s\'equence}
+
+Un diagramme de s\'equence par cas d'utilisation d\'ecrit ci-dessus, entre
+l'Utilisateur, le Syst\`eme et la base de donn\'ees.
+
+\paragraph{G\'erer les comptes utilisateurs}
+
+Liste des comptes avec recherche et filtre par statut, puis modification
+optionnelle (statut, r\^ole ou suppression), prot\'eg\'ee par un garde-fou
+emp\^echant un administrateur de modifier son propre compte.
+
+\TODOFigure{diagramme-sequence-gerer-comptes.jpeg}{Diagramme de s\'equence -- G\'erer les comptes utilisateurs}{fig:sequence-gerer-comptes}
+
+\paragraph{Lancer une analyse}
+
+Saisie de l'URL, validation du format, cr\'eation de l'analyse (statut
+\texttt{en\_cours}) en base et confirmation \`a l'utilisateur, avec le chemin
+d'exception \og~URL invalide~\fg. Ce cas d\'eclenche automatiquement \og~Traiter
+l'analyse~\fg{} (relation \og~include~\fg).
+
+\TODOFigure{diagramme-sequence-lancer-analyse.jpeg}{Diagramme de s\'equence -- Lancer une analyse}{fig:sequence-lancer}
+
+\paragraph{Traiter l'analyse}
+
+Ex\'ecution des sept contr\^oles (HTTPS, certificat SSL, en-t\^etes de
+s\'ecurit\'e, cookies, vuln\'erabilit\'es, fichiers expos\'es, s\'ecurit\'e email
+SPF/DMARC), calcul du score et du niveau de risque, g\'en\'eration des
+recommandations et du rapport, puis enregistrement en base, avec le chemin
+d'exception \og~adresse non autoris\'ee, site inaccessible ou timeout~\fg. Le
+traitement est d\'el\'egu\'e \`a une file d'attente~: une fois termin\'e,
+l'utilisateur est notifi\'e dans l'application s'il suivait cette analyse
+(\og~\^Etre notifi\'e de la fin d'une analyse~\fg).
+
+\TODOFigure{diagramme-sequence-traiter-analyse.jpeg}{Diagramme de s\'equence -- Traiter l'analyse}{fig:sequence-traiter}
+
+\paragraph{Consulter les rapports}
+
+Acc\`es \`a l'historique des analyses, s\'election d'une analyse pour en consulter
+le d\'etail, et t\'el\'echargement optionnel du rapport PDF, avec le chemin
+d'exception \og~aucune analyse enregistr\'ee~\fg.
+
+\paragraph{Mod\'erer les analyses}
+
+Vue globale r\'eserv\'ee \`a l'Administrateur~: m\^emes principes de recherche et
+de filtrage que \og~Consulter les rapports~\fg, mais sans restriction au
+propri\'etaire, avec une action de suppression suppl\'ementaire. Acc\`es prot\'eg\'e
+par le r\^ole administrateur~: une tentative par un utilisateur normal est
+refus\'ee (403).
+
+\section{Outils utilis\'es}
+
+\subsection{Mat\'eriels utilis\'es}
+
+Le d\'eveloppement a \'et\'e r\'ealis\'e sur un ordinateur portable \textbf{HP ProBook
+450 G7}, dot\'e d'un processeur \textbf{Intel Core i7-10510U} cadenc\'e \`a
+1,80~GHz (jusqu'\`a 2,30~GHz en turbo), de \textbf{16~Go de m\'emoire RAM}, d'un
+disque de stockage de 238~Go et d'une carte graphique int\'egr\'ee Intel UHD
+Graphics, sous \textbf{Windows 11 Pro}.
+
+\subsection{Frontend}
+\begin{itemize}
+  \item \textbf{React (Vite)}~: biblioth\`eque JavaScript utilis\'ee pour construire
+    une interface utilisateur dynamique en Single Page Application, avec
+    \texttt{react-router-dom} pour la navigation et \texttt{axios} pour la
+    communication avec l'API.
+\end{itemize}
+
+\subsection{Backend (API et logique m\'etier)}
+\begin{itemize}
+  \item \textbf{Laravel}~: framework PHP servant de base \`a l'API RESTful,
+    responsable de la logique m\'etier (moteur de v\'erification de s\'ecurit\'e), de
+    l'interaction avec la base de donn\'ees via l'ORM Eloquent, et de la gestion
+    de l'authentification via \textbf{Laravel Sanctum}.
+\end{itemize}
+
+\subsection{Environnement de d\'eveloppement local}
+\begin{itemize}
+  \item \textbf{XAMPP}~: environnement logiciel int\'egr\'e fournissant Apache, PHP
+    et MySQL (MariaDB) pour le d\'eveloppement local de l'application Laravel.
+\end{itemize}
+
+\subsection{Conception d'interface}
+\begin{itemize}
+  \item \textbf{Stitch} (Google)~: outil de g\'en\'eration de maquettes haute-fid\'elit\'e \`a
+    partir de prompts textuels, utilis\'e pour produire les \'ecrans pr\'esent\'es en
+    section~\ref{sec:maquettes} \`a partir de l'identit\'e visuelle d\'efinie pour le
+    projet (palette de couleurs, typographie, style des composants).
+\end{itemize}
+
+\subsection{Outils de test}
+
+Deux niveaux de test compl\'ementaires ont \'et\'e utilis\'es tout au long du
+d\'eveloppement.
+
+\paragraph{Tests automatis\'es (backend)} L'API est couverte par une suite de
+tests \textbf{PHPUnit}, ex\'ecut\'ee via la commande \texttt{php artisan test}.
+Chaque test s'appuie sur le trait \texttt{RefreshDatabase} pour repartir d'une
+base de donn\'ees propre, et la biblioth\`eque \textbf{Mockery} est utilis\'ee
+pour simuler les r\'eponses du service tiers Google (fa\c{c}ade Socialite) sans
+d\'ependre d'une v\'eritable connexion \`a Google lors des tests. Ces tests
+couvrent notamment~: l'authentification (classique et via Google), les
+autorisations d'acc\`es (propri\'etaire d'une ressource, r\^ole administrateur,
+garde-fous anti-auto-modification), la validation des URL soumises \`a
+analyse (rejet des adresses r\'eseau priv\'ees ou invalides), et les r\`egles de
+gestion des param\`etres de scoring.
+
+\paragraph{Tests manuels de bout en bout (frontend)} L'interface a \'et\'e
+v\'erifi\'ee de mani\`ere r\'ep\'et\'ee \`a l'aide de \textbf{Playwright}, un outil
+d'automatisation de navigateur~: simulation d'un parcours utilisateur complet
+(connexion, lancement d'une analyse, consultation du r\'esultat), v\'erification
+de l'absence de d\'ebordement horizontal sur mobile \`a plusieurs largeurs
+d'\'ecran, et contr\^ole du bon fonctionnement des fonctionnalit\'es
+d'administration. Cette approche a permis de d\'etecter plusieurs anomalies
+r\'eelles avant qu'elles n'affectent l'utilisateur final (par exemple, une
+session non d\'emarr\'ee sur le chemin de retour de l'authentification Google, ou
+une condition de course dans le suivi des notifications en arri\`ere-plan).
+
+\subsection{D\'eploiement (mise en production)}
+
+\`A ce stade du projet, la plateforme n'est pas encore d\'eploy\'ee en production~:
+le d\'eveloppement et les tests se font en environnement local via XAMPP
+(Apache, MySQL) pour le backend et le serveur de d\'eveloppement Vite pour le
+frontend. Le choix d'un h\'ebergeur et la mise en production font partie des
+perspectives d'\'evolution du projet (voir conclusion).
+
+\section{Maquettes}
+\label{sec:maquettes}
+
+Sur la base de l'identit\'e visuelle d\'efinie pour CyberGuard B\'enin --
+\og~Le Sceau~\fg, une identit\'e de confiance institutionnelle~: papier chaud
+(\#F5F1E6), bleu marine (\#16304A), accent or (\#B8863A), typographie
+Georgia pour les titres, composants aux coins nets et bordures fines plut\^ot
+que des ombres port\'ees -- des maquettes haute-fid\'elit\'e ont \'et\'e
+r\'ealis\'ees avec \textbf{Stitch} pour chacun des \'ecrans identifi\'es \`a
+partir des cas d'utilisation, avant l'impl\'ementation compl\`ete du frontend.
+L'identit\'e visuelle a \'et\'e enti\`erement red\'efinie en cours de projet~; les
+maquettes ci-dessous refl\`etent la version actuelle.
+
+\TODOFigure{maquette-accueil.png}{Accueil, avec la modale Connexion/Inscription}{fig:maq-accueil}
+\TODOFigure{maquette-mot-de-passe-oublie.png}{Mot de passe oubli\'e}{fig:maq-mdp-oublie}
+\TODOFigure{maquette-mon-profil.png}{Mon profil}{fig:maq-profil}
+\TODOFigure{maquette-tableau-de-bord-mobile.png}{Tableau de bord (variante mobile)}{fig:maq-dashboard-mobile}
+\TODOFigure{maquette-tableau-de-bord-desktop.png}{Tableau de bord (variante desktop)}{fig:maq-dashboard-desktop}
+\TODOFigure{maquette-nouvelle-analyse.png}{Nouvelle analyse (analyse en cours)}{fig:maq-nouvelle-analyse}
+\TODOFigure{maquette-resultat-analyse.png}{R\'esultat d'analyse}{fig:maq-resultat}
+\TODOFigure{maquette-historique.png}{Historique des analyses}{fig:maq-historique}
+\TODOFigure{maquette-detail-rapport.png}{D\'etail d'un rapport, avec t\'el\'echargement PDF}{fig:maq-detail-rapport}
+\TODOFigure{maquette-admin-utilisateurs.png}{Administration -- gestion des utilisateurs}{fig:maq-admin-utilisateurs}
+\TODOFigure{maquette-admin-analyses.png}{Administration -- mod\'eration des analyses}{fig:maq-admin-analyses}
+\TODOFigure{maquette-admin-parametres.png}{Administration -- statistiques et param\`etres}{fig:maq-admin-parametres}
+
+\begin{table}[H]
+  \centering
+  \caption{Correspondance maquette / cas d'utilisation}
+  \begin{tabular}{p{6cm}p{6.5cm}}
+    \toprule
+    \textbf{Maquette} & \textbf{Cas d'utilisation associ\'e} \\
+    \midrule
+    Accueil & S'authentifier (email/mot de passe ou Google), G\'erer son compte (inscription) \\
+    Mot de passe oubli\'e & G\'erer son compte (r\'einitialisation) \\
+    Mon profil & G\'erer son compte (modification) \\
+    Tableau de bord & Consulter le tableau de bord \\
+    Nouvelle analyse & Lancer une analyse \\
+    R\'esultat d'analyse & Traiter l'analyse (r\'esultat), \^Etre notifi\'e de la fin d'une analyse \\
+    Historique & Consulter les rapports (liste) \\
+    D\'etail d'un rapport & Consulter les rapports (d\'etail + PDF) \\
+    Administration -- utilisateurs & G\'erer les comptes utilisateurs \\
+    Administration -- analyses & Mod\'erer les analyses \\
+    Administration -- param\`etres & Administrer la plateforme \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,60 @@
+# Parité locale/démo avec la prod : 3 processus backend séparés (web, queue,
+# scheduler) au lieu du script composer "dev" qui les lance tous ensemble
+# en local. SQLite par défaut, comme backend/.env.example — passer à MySQL
+# est un simple changement de DB_CONNECTION (voir docs/DEPLOIEMENT.md).
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      RUN_MIGRATIONS: "true"
+    volumes:
+      - backend-storage:/var/www/html/storage
+      - backend-database:/var/www/html/database
+
+  queue:
+    build:
+      context: ./backend
+    command: ["php", "artisan", "queue:work", "--tries=1"]
+    env_file:
+      - ./backend/.env
+    environment:
+      RUN_MIGRATIONS: "false"
+    volumes:
+      - backend-storage:/var/www/html/storage
+      - backend-database:/var/www/html/database
+    depends_on:
+      - backend
+
+  scheduler:
+    build:
+      context: ./backend
+    command: ["php", "artisan", "schedule:work"]
+    env_file:
+      - ./backend/.env
+    environment:
+      RUN_MIGRATIONS: "false"
+    volumes:
+      - backend-storage:/var/www/html/storage
+      - backend-database:/var/www/html/database
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000/api
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  backend-storage:
+  backend-database:

@@ -1,0 +1,69 @@
+\chapter*{Annexes}
+\addcontentsline{toc}{chapter}{Annexes}
+\markboth{Annexes}{}
+
+\section*{1. Extrait du code pour le lancement d'une analyse}
+\addcontentsline{toc}{section}{1. Extrait du code pour le lancement d'une analyse}
+
+\begin{lstlisting}[language=PHP]
+/**
+ * Cas d'utilisation : Lancer une analyse -> declenche "Traiter l'analyse".
+ */
+public function store(Request $request)
+{
+    $data = $request->validate([
+        'url' => ['required', 'string', 'max:255', 'url'],
+    ]);
+
+    $analyse = $request->user()->analyses()->create([
+        'url' => $data['url'],
+        'date_analyse' => now(),
+        'statut' => 'en_cours',
+    ]);
+
+    try {
+        $this->service->executer($analyse);
+    } catch (\Throwable $e) {
+        Log::error('Echec du traitement de l\'analyse #'.$analyse->id, ['exception' => $e]);
+        $analyse->update(['statut' => 'echec']);
+    }
+
+    return response()->json($analyse->fresh('resultatsVerification'), 201);
+}
+\end{lstlisting}
+
+\section*{2. Extrait du moteur de v\'erification (calcul du score)}
+\addcontentsline{toc}{section}{2. Extrait du moteur de v\'erification (calcul du score)}
+
+\begin{lstlisting}[language=PHP]
+private function calculerScore(array $resultats, ParametreScore $bareme): array
+{
+    $poidsParType = [
+        'https' => $bareme->poids_https / 2,
+        'certificat_ssl' => $bareme->poids_https / 2,
+        'en_tetes_securite' => $bareme->poids_headers,
+        'cookies' => $bareme->poids_cookies,
+        'vulnerabilites' => $bareme->poids_vulnerabilites,
+    ];
+
+    $score = 0;
+    foreach ($resultats as $resultat) {
+        if ($resultat['statut'] === 'conforme') {
+            $score += $poidsParType[$resultat['type']] ?? 0;
+        }
+    }
+
+    $score = (int) round($score);
+
+    $niveauRisque = match (true) {
+        $score >= $bareme->seuil_bon => 'bon',
+        $score >= $bareme->seuil_moyen => 'moyen',
+        default => 'faible',
+    };
+
+    return [$score, $niveauRisque];
+}
+\end{lstlisting}
+
+% TODO : ajouter d'autres extraits pertinents au fil du d\'eveloppement
+% (migrations, composants React, etc.).

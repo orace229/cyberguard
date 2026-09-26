@@ -1,0 +1,152 @@
+\chapter{D\'eroulement du stage}
+\label{chap:deroulement}
+
+Durant un mois, du \datedebut{} au \datefin{}, notre stage au sein de la
+\entreprise{} nous a permis de d\'ecouvrir le fonctionnement d'une structure
+publique en charge du pilotage de la recherche scientifique au B\'enin, tout en
+menant en parall\`ele notre projet de m\'emoire de fin de formation. Ce chapitre
+pr\'esente en premier lieu le minist\`ere de tutelle et la DGRSI, puis d\'ecrit les
+activit\'es men\'ees durant le stage. Il se termine par une analyse des apports de
+cette exp\'erience et des difficult\'es rencontr\'ees.
+
+\section{Pr\'esentation de la structure}
+
+\subsection{Historique}
+
+La Direction G\'en\'erale de la Recherche Scientifique et de l'Innovation
+(DGRSI) est l'une des deux directions g\'en\'erales du Minist\`ere de
+l'Enseignement Sup\'erieur et de la Recherche Scientifique (MESRS), aux c\^ot\'es
+de la Direction G\'en\'erale de l'Enseignement Sup\'erieur (DGES). Son
+organisation et son fonctionnement actuels sont r\'egis par le d\'ecret
+n\textsuperscript{o}2023-150 du 12 avril 2023 portant attributions,
+organisation et fonctionnement du MESRS, qui pr\'ecise les missions confi\'ees \`a
+chacune de ses structures.
+
+\subsection{Raison d'\^etre}
+
+Le MESRS a pour mission de concevoir, mettre en \oe uvre, suivre et \'evaluer la
+politique nationale en mati\`ere d'enseignement sup\'erieur, de recherche
+scientifique et d'innovation, conform\'ement aux lois en vigueur en R\'epublique
+du B\'enin. Au sein de ce minist\`ere, la DGRSI est sp\'ecifiquement charg\'ee de la
+conception, de la coordination et du suivi de la mise en \oe uvre de la
+politique de l'\'Etat en mati\`ere de recherche scientifique et d'innovation.
+
+\subsection{Objectifs}
+
+Parmi les attributions confi\'ees \`a la DGRSI figurent notamment~: l'\'elaboration
+de la politique nationale de la recherche et de l'innovation, en collaboration
+avec l'Agence B\'eninoise pour la Recherche et l'Innovation (ABRI)~; la
+coordination et la supervision des activit\'es de recherche men\'ees dans les
+institutions universitaires publiques et priv\'ees ainsi que dans les instituts,
+centres et laboratoires de recherche~; le suivi de ces activit\'es aux plans
+global et sectoriel~; la promotion de la formation en sciences et techniques,
+notamment \`a l'endroit des femmes et des jeunes~; et l'\'elaboration d'une
+plateforme nationale d'informations en science, technologie et innovation.
+
+\section{Organisation technique et manag\'eriale}
+
+\subsection{Structure organisationnelle}
+
+Outre le secr\'etariat de la direction, la DGRSI s'appuie sur des structures
+d'accompagnement (Cellule informatique~; Cellule de la Statistique, de la
+Documentation et du Pr\'earchivage~; assistant-r\'egisseur) et deux d\'epartements
+techniques~: le D\'epartement de la Qualit\'e et du Suivi de la Recherche
+scientifique et de l'Innovation, et le D\'epartement du Partenariat et de la
+Promotion de la Recherche Scientifique et de l'Innovation.
+
+Nous avons \'et\'e affect\'es \`a la \textbf{Cellule de la Statistique, de la
+Documentation et du Pr\'earchivage}, charg\'ee notamment d'\'elaborer les fiches
+statistiques sur les activit\'es de la direction, en vue de la collecte et du
+traitement des informations, de tenir \`a jour et de pr\'earchiver les documents
+de la direction, de produire les statistiques du secteur et de veiller \`a leur
+archivage.
+
+\TODOFigure{organigramme_MESRS_DGRSI.png}{Organigramme simplifi\'e du MESRS et de la DGRSI -- la case fonc\'ee indique la structure d'accueil du stage (source~: d\'ecret n\textsuperscript{o}2023-150 du 12 avril 2023)}{fig:organigramme}
+
+\section{Travaux effectu\'es}
+
+Au sein de la Cellule de la Statistique, nous avons particip\'e aux activit\'es
+courantes de collecte, de mise \`a jour et de pr\'earchivage des documents et
+donn\'ees statistiques de la direction, ce qui nous a permis de d\'ecouvrir
+concr\`etement les m\'ecanismes de suivi des activit\'es de recherche et
+d'innovation au niveau national.
+
+L'essentiel de notre temps de stage a toutefois \'et\'e consacr\'e \`a la
+conception et au d\'eveloppement de notre projet de programmation,
+\textbf{CyberGuard B\'enin}, r\'ealis\'e dans le cadre de notre m\'emoire de fin de
+formation. Ce travail s'est d\'eroul\'e en plusieurs \'etapes~:
+
+\begin{itemize}[nosep]
+  \item clarification du besoin et des objectifs du projet~;
+  \item choix de la stack technique (Laravel pour l'API backend, React pour le
+    frontend, MySQL comme syst\`eme de gestion de base de donn\'ees)~;
+  \item mod\'elisation UML du syst\`eme~: identification des acteurs et des cas
+    d'utilisation, diagrammes de classes, d'objets et de s\'equence~;
+  \item conception de la base de donn\'ees et d\'efinition du dictionnaire des
+    donn\'ees~;
+  \item d\'efinition puis red\'efinition compl\`ete de l'identit\'e visuelle de la
+    plateforme, suivie de la r\'ealisation de maquettes haute-fid\'elit\'e~;
+  \item impl\'ementation du moteur d'analyse de s\'ecurit\'e (sept contr\^oles non
+    intrusifs~: HTTPS, certificat SSL, en-t\^etes de s\'ecurit\'e, cookies,
+    vuln\'erabilit\'es, fichiers sensibles expos\'es, s\'ecurit\'e email SPF/DMARC),
+    du calcul du score et des recommandations~;
+  \item impl\'ementation de l'authentification (par email/mot de passe et via
+    Google), du tableau de bord, de l'historique des analyses et des
+    notifications in-app~;
+  \item impl\'ementation du back-office d'administration (gestion des comptes,
+    mod\'eration des analyses, param\'etrage du bar\`eme de scoring)~;
+  \item tests fonctionnels et corrections successives, jusqu'\`a l'obtention
+    d'une plateforme stable et utilisable.
+\end{itemize}
+
+\section{Apport du stage sur le plan professionnel}
+
+Ce stage nous a permis de mettre en pratique, sur un projet r\'eel et de bout en
+bout, l'ensemble du cycle de vie d'un projet informatique~: de la clarification
+du besoin jusqu'\`a une plateforme fonctionnelle, en passant par la
+mod\'elisation UML, la conception de base de donn\'ees et le d\'eveloppement
+technique. Il a \'egalement renforc\'e nos comp\'etences en d\'eveloppement web
+full-stack (Laravel, React), en s\'ecurit\'e applicative (authentification,
+protection contre le sondage d'adresses r\'eseau internes, validation des
+entr\'ees), ainsi qu'en gestion it\'erative d'un projet~: priorisation des
+fonctionnalit\'es, correction de r\'egressions, et adaptation continue de la
+plateforme aux retours obtenus au fil du d\'eveloppement. Le passage par la
+Cellule de la Statistique nous a par ailleurs sensibilis\'es \`a l'importance
+d'une donn\'ee fiable et \`a jour pour le pilotage de politiques publiques -- un
+constat qui fait \'echo \`a la probl\'ematique m\^eme de CyberGuard B\'enin~: donner
+\`a des acteurs non-techniciens une information fiable et compr\'ehensible sur
+laquelle agir.
+
+\section{Difficult\'es rencontr\'ees}
+
+Le d\'eveloppement de CyberGuard B\'enin n'a pas \'et\'e exempt de difficult\'es
+techniques. Nous en retenons notamment quatre~:
+
+\begin{itemize}[nosep]
+  \item \textbf{Authentification via Google et gestion de session}~:
+    l'int\'egration de la connexion via Google (Laravel Socialite) s'est
+    heurt\'ee \`a un comportement du middleware de session de Laravel Sanctum,
+    qui ne d\'emarre une session que lorsque la requ\^ete est reconnue comme
+    provenant du frontend (via l'en-t\^ete \emph{Referer}) -- ce qui n'est pas le
+    cas d'un retour depuis Google. Il a fallu forcer explicitement le d\'emarrage
+    de session sur les routes concern\'ees.
+  \item \textbf{S\'ecurit\'e du moteur d'analyse}~: le moteur devant accepter une
+    URL saisie librement par l'utilisateur, une attention particuli\`ere a \'et\'e
+    port\'ee \`a emp\^echer qu'il ne soit d\'etourn\'e pour sonder le r\'eseau interne
+    du serveur (SSRF)~; la r\'esolution DNS de l'h\^ote est donc v\'erifi\'ee \`a deux
+    reprises (\`a la soumission puis juste avant l'analyse effective).
+  \item \textbf{Fiabilit\'e du traitement en arri\`ere-plan}~: les analyses \'etant
+    trait\'ees de mani\`ere asynchrone via une file d'attente, un oubli de
+    d\'emarrage du worker de traitement laissait certaines analyses bloqu\'ees
+    ind\'efiniment au statut \og~en cours~\fg{} -- un point de vigilance
+    r\'ecurrent en environnement de d\'eveloppement local.
+  \item \textbf{Accessibilit\'e des r\'esultats pour un public non-technicien}~:
+    conform\'ement \`a l'objectif du projet, les premiers constats techniques
+    g\'en\'er\'es (en-t\^etes HTTP manquants, versions de protocole obsol\`etes...)
+    se sont r\'ev\'el\'es trop jargonneux pour l'utilisateur cible. L'ensemble des
+    descriptions et recommandations a d\^u \^etre reformul\'e en langage courant,
+    compr\'ehensible sans connaissance pr\'ealable en s\'ecurit\'e informatique.
+\end{itemize}
+
+Ces difficult\'es, une fois identifi\'ees, ont chacune \'et\'e corrig\'ees et
+v\'erifi\'ees avant la poursuite du d\'eveloppement.

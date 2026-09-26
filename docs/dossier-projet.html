@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CyberGuard Bénin — Dossier de conception</title>
+<style>
+  @page { margin: 22mm 18mm; }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#fff; color:#000;
+    font-family:Georgia,"Times New Roman",serif;
+    line-height:1.6; font-size:14px;
+  }
+  .doc{max-width:820px;margin:0 auto;padding:50px 26px 100px;}
+  .mono{font-family:"Courier New",Courier,monospace;}
+  .sans{font-family:Arial,Helvetica,sans-serif;}
+
+  /* cover */
+  .cover{text-align:center;padding:80px 0 60px;border-bottom:2px solid #000;margin-bottom:40px;}
+  .cover .kicker{font-family:Arial,sans-serif;letter-spacing:0.18em;text-transform:uppercase;font-size:12px;margin:0 0 18px;}
+  .cover h1{font-size:34px;margin:0 0 10px;}
+  .cover .subtitle{font-size:16px;font-style:italic;margin:0 0 30px;}
+  .cover .meta{font-family:Arial,sans-serif;font-size:12px;color:#333;}
+
+  h2.section{
+    font-family:Arial,sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:0.04em;
+    border-bottom:2px solid #000;padding-bottom:8px;margin:56px 0 20px;
+    break-before:page;
+  }
+  h2.section.first{break-before:auto;margin-top:0;}
+  h3{font-family:Arial,sans-serif;font-size:15px;margin:26px 0 10px;}
+  h4{font-family:Arial,sans-serif;font-size:13px;margin:18px 0 6px;}
+  p{margin:0 0 12px;}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-family:Arial,sans-serif;font-size:12.5px;}
+  th,td{border:1px solid #000;padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:#eee;font-weight:700;}
+
+  ul,ol{margin:0 0 14px;padding-left:22px;}
+  li{margin-bottom:4px;}
+
+  .callout{border:1px solid #000;padding:10px 14px;margin:14px 0;font-family:Arial,sans-serif;font-size:12.5px;background:#f5f5f5;}
+  .toc{font-family:Arial,sans-serif;font-size:13px;}
+  .toc ol{padding-left:20px;}
+  .toc li{margin-bottom:6px;}
+
+  /* ---- wireframe primitives (pure black / white / gray) ---- */
+  .wf-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:18px 0 30px;}
+  .wf-block{break-inside:avoid;}
+  .wf-caption{font-family:Arial,sans-serif;font-size:11.5px;font-weight:700;margin:8px 0 2px;}
+  .wf-desc{font-family:Arial,sans-serif;font-size:11px;color:#333;margin:0 0 6px;}
+  .wf-frame{
+    border:1.4px solid #000;background:#fff;padding:0;font-family:Arial,sans-serif;
+    aspect-ratio:4/3;overflow:hidden;position:relative;
+  }
+  .wf-topbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;padding:5px 7px;}
+  .wf-logo{width:9px;height:9px;border:1px solid #000;border-radius:50%;flex:none;}
+  .wf-navlinks{display:flex;gap:5px;}
+  .wf-navlink{width:16px;height:3px;background:#000;}
+  .wf-navlink.light{background:#aaa;}
+  .wf-avatar{width:9px;height:9px;border:1px solid #000;border-radius:50%;flex:none;}
+  .wf-body{padding:8px;}
+  .wf-h{height:6px;background:#000;margin-bottom:5px;}
+  .wf-p{height:3px;background:#999;margin-bottom:3px;}
+  .wf-card{border:1px solid #000;padding:5px;margin-bottom:6px;}
+  .wf-btn{border:1px solid #000;font-size:6.5px;padding:2.5px 6px;display:inline-block;}
+  .wf-btn.solid{background:#000;color:#fff;}
+  .wf-input{border:1px solid #000;height:9px;margin-bottom:5px;}
+  .wf-row{display:flex;gap:5px;}
+  .wf-col{flex:1;}
+  .wf-x{
+    border:1px solid #000;
+    background-image:
+      linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
+  }
+  .wf-dot{width:5px;height:5px;border-radius:50%;border:1px solid #000;display:inline-block;}
+  .wf-dot.filled{background:#000;}
+  .wf-pill{border:1px solid #000;border-radius:8px;font-size:6px;padding:1.5px 6px;display:inline-block;}
+  .wf-circle{border:1.4px solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+  .wf-scrim{position:absolute;inset:0;background:rgba(0,0,0,0.06);}
+  .wf-modal{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:60%;border:1.4px solid #000;background:#fff;padding:7px;
+  }
+  .wf-tabs{display:flex;border:1px solid #000;margin-bottom:6px;}
+  .wf-tab{flex:1;text-align:center;font-size:6px;padding:3px 0;}
+  .wf-tab.active{background:#000;color:#fff;}
+  .wf-slider{height:2px;background:#000;position:relative;margin:6px 0;}
+  .wf-slider::after{content:"";position:absolute;left:35%;top:-2.5px;width:6px;height:6px;border-radius:50%;background:#000;}
+
+  .diagram-box{border:1.4px solid #000;padding:14px;margin:16px 0;}
+  svg{display:block;margin:0 auto;}
+
+  footer.page-footer{margin-top:60px;padding-top:14px;border-top:1px solid #000;font-family:Arial,sans-serif;font-size:11px;color:#333;text-align:center;}
+
+  @media print{
+    .doc{padding:0;}
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <div class="cover">
+    <p class="kicker">Rapport de stage — Dossier de conception</p>
+    <h1>CyberGuard Bénin</h1>
+    <p class="subtitle">Plateforme intelligente d'analyse et d'évaluation de la sécurité des sites web</p>
+    <p class="meta">Semaine 1 — Clarification du projet, choix techniques, acteurs, cas d'utilisation et maquettes</p>
+  </div>
+
+  <div class="toc">
+    <h3>Sommaire</h3>
+    <ol>
+      <li>Clarification du projet</li>
+      <li>Objectifs</li>
+      <li>Choix des outils de travail</li>
+      <li>Identification des acteurs</li>
+      <li>Cas d'utilisation</li>
+      <li>Diagramme de cas d'utilisation</li>
+      <li>Diagramme de classes</li>
+      <li>Diagramme de séquence</li>
+      <li>Diagramme d'objets</li>
+      <li>Maquettes</li>
+    </ol>
+  </div>
+
+  <!-- ============ 1. CLARIFICATION ============ -->
+  <h2 class="section first">1. Clarification du projet</h2>
+
+  <h3>Contexte</h3>
+  <p>Au Bénin, de plus en plus d'entreprises, écoles, administrations et PME se dotent d'un site web pour exister en ligne — vitrine, services, communication. Mais la sécurité informatique reste un domaine technique réservé à des spécialistes, et la majorité de ces structures n'ont ni les compétences ni les moyens de vérifier si leur site respecte les standards de sécurité de base.</p>
+
+  <h3>Problème</h3>
+  <p>Un site web mal sécurisé expose son propriétaire (et ses visiteurs) à des risques concrets : usurpation via un site sans HTTPS, interception de données sur une connexion non chiffrée, attaques facilitées par l'absence d'en-têtes de sécurité, ou fuite d'informations sur le serveur utilisé. Le problème n'est pas seulement technique — c'est un problème d'accès à l'information : le propriétaire d'un site ne sait généralement pas si son site est vulnérable, ni quoi vérifier, ni comment corriger. Les outils existants (Mozilla Observatory, SSL Labs) sont souvent en anglais, dispersés, et pas pensés pour un utilisateur non-technicien qui veut juste comprendre « est-ce que mon site est sûr, et que dois-je faire ? ».</p>
+
+  <h3>Solution</h3>
+  <p>CyberGuard Bénin est une plateforme qui automatise ce diagnostic. L'utilisateur crée un compte, saisit l'URL de son site, et la plateforme lance une série de vérifications non intrusives (HTTPS, certificat SSL, en-têtes de sécurité, exposition d'informations serveur, cookies, etc.). Le système traduit ces résultats techniques en un score sur 100 et un niveau de risque (Bon / Moyen / Faible), accompagné de recommandations concrètes et compréhensibles. Un rapport PDF est généré, et l'utilisateur peut suivre l'évolution de la sécurité de son site dans le temps via un tableau de bord et un historique.</p>
+
+  <h3>Enjeux</h3>
+  <p>Un enjeu de démocratisation : rendre la cybersécurité accessible à des acteurs qui n'ont ni budget ni expertise pour un audit professionnel. Un enjeu de confiance numérique : plus de sites correctement sécurisés au Bénin, c'est moins de surface d'attaque pour les utilisateurs finaux (vols de données, phishing, sites compromis). Un enjeu technique : construire un outil qui reste crédible — les vérifications doivent être justes et bien pondérées, sinon le score n'a aucune valeur — tout en restant non intrusif, c'est-à-dire ne jamais tenter d'exploiter une faille, seulement la détecter passivement. Enfin, un enjeu de pédagogie : le rapport doit être compréhensible par quelqu'un qui ne connaît rien à la sécurité.</p>
+
+  <!-- ============ 2. OBJECTIFS ============ -->
+  <h2 class="section">2. Objectifs</h2>
+
+  <h3>Objectif général</h3>
+  <p>Concevoir et développer une plateforme web permettant d'évaluer automatiquement le niveau de sécurité d'un site web et de produire un rapport d'analyse compréhensible.</p>
+
+  <h3>Objectifs spécifiques</h3>
+  <ul>
+    <li>Authentifier les utilisateurs, par email/mot de passe ou via un compte Google déjà existant.</li>
+    <li>Permettre l'analyse d'un site web.</li>
+    <li>Vérifier la présence du protocole HTTPS et la redirection depuis HTTP.</li>
+    <li>Vérifier le certificat SSL/TLS (validité, correspondance du domaine, version du protocole).</li>
+    <li>Contrôler les principaux en-têtes HTTP de sécurité.</li>
+    <li>Vérifier la configuration des cookies (Secure, HttpOnly, SameSite).</li>
+    <li>Détecter quelques vulnérabilités simples et non intrusives.</li>
+    <li>Détecter les fichiers sensibles exposés publiquement (.env, .git...).</li>
+    <li>Vérifier la protection du domaine contre l'usurpation d'email (SPF/DMARC).</li>
+    <li>Générer un rapport d'analyse.</li>
+    <li>Conserver l'historique des analyses.</li>
+    <li>Fournir des recommandations adaptées et compréhensibles par un public non-technicien.</li>
+    <li>Notifier l'utilisateur, dans l'application, lorsqu'une analyse lancée en arrière-plan se termine.</li>
+    <li>Permettre à un administrateur de gérer les comptes (statut, rôle) et de modérer les analyses de tous les utilisateurs.</li>
+  </ul>
+
+  <!-- ============ 3. OUTILS ============ -->
+  <h2 class="section">3. Choix des outils de travail</h2>
+
+  <h3>Stack technique retenue</h3>
+  <table>
+    <tr><th>Couche</th><th>Choix</th></tr>
+    <tr><td>Frontend</td><td>React (Vite)</td></tr>
+    <tr><td>Backend</td><td>Laravel</td></tr>
+    <tr><td>Base de données</td><td>MySQL (MariaDB via XAMPP)</td></tr>
+    <tr><td>Authentification</td><td>Laravel Breeze / Sanctum</td></tr>
+    <tr><td>Génération PDF</td><td>DomPDF</td></tr>
+  </table>
+
+  <h3>Outils installés</h3>
+  <table>
+    <tr><th>Outil</th><th>Rôle</th><th>Version</th></tr>
+    <tr><td>Git</td><td>Contrôle de version</td><td>2.54.0</td></tr>
+    <tr><td>PHP</td><td>Runtime backend</td><td>8.2.12 (XAMPP)</td></tr>
+    <tr><td>Composer</td><td>Gestionnaire de dépendances PHP</td><td>2.9.5</td></tr>
+    <tr><td>Laravel Installer</td><td>Scaffolding des projets Laravel</td><td>5.30.0</td></tr>
+    <tr><td>Node.js / npm</td><td>Runtime et gestionnaire de paquets frontend</td><td>v26.1.0 / 11.13.0</td></tr>
+    <tr><td>MySQL (MariaDB)</td><td>Base de données</td><td>10.4.32</td></tr>
+  </table>
+
+  <h3>Organisation des espaces de travail</h3>
+  <p>Structure en monorepo : <span class="mono">backend/</span> (API Laravel), <span class="mono">frontend/</span> (application React), <span class="mono">docs/</span> (documentation du projet). Dépôt Git central avec une branche <span class="mono">main</span> stable et une branche par fonctionnalité, fusionnée via pull request.</p>
+
+  <!-- ============ 4. ACTEURS ============ -->
+  <h2 class="section">4. Identification des acteurs</h2>
+
+  <table>
+    <tr><th>Acteur</th><th>Description</th></tr>
+    <tr><td><b>Utilisateur</b></td><td>Personne disposant d'un compte sur la plateforme, propriétaire ou responsable d'un site web qu'elle souhaite analyser.</td></tr>
+    <tr><td><b>Administrateur</b></td><td>Personne chargée de la gestion de la plateforme (comptes, statistiques, paramètres de scoring). Hérite de tous les droits de l'Utilisateur.</td></tr>
+    <tr><td><b>Système</b></td><td>Acteur non-humain : partie automatisée de l'application qui exécute les vérifications techniques et produit les résultats.</td></tr>
+  </table>
+
+  <!-- ============ 5. CAS D'UTILISATION ============ -->
+  <h2 class="section">5. Cas d'utilisation</h2>
+
+  <table>
+    <tr><th>#</th><th>Cas d'utilisation</th><th>Acteur</th></tr>
+    <tr><td>1</td><td>Gérer son compte</td><td>Utilisateur</td></tr>
+    <tr><td>2</td><td>Se connecter</td><td>Utilisateur</td></tr>
+    <tr><td>3</td><td>S'authentifier</td><td>Utilisateur</td></tr>
+    <tr><td>4</td><td>Lancer une analyse</td><td>Utilisateur</td></tr>
+    <tr><td>5</td><td>Consulter les rapports</td><td>Utilisateur</td></tr>
+    <tr><td>6</td><td>Consulter le tableau de bord</td><td>Utilisateur</td></tr>
+    <tr><td>7</td><td>Être notifié de la fin d'une analyse</td><td>Utilisateur</td></tr>
+    <tr><td>8</td><td>Gérer les comptes utilisateurs</td><td>Administrateur</td></tr>
+    <tr><td>9</td><td>Modérer les analyses</td><td>Administrateur</td></tr>
+    <tr><td>10</td><td>Administrer la plateforme</td><td>Administrateur</td></tr>
+    <tr><td>11</td><td>Traiter l'analyse</td><td>Système</td></tr>
+  </table>
+  <p class="callout"><b>S'authentifier</b> n'est jamais déclenché directement par l'utilisateur : c'est un cas inclus par tous les cas nécessitant une session active (Gérer son compte, Se connecter, Lancer une analyse, Consulter les rapports, Consulter le tableau de bord, Être notifié de la fin d'une analyse) — il correspond à la vérification de session effectuée par le middleware d'authentification à chaque requête protégée. <b>Se connecter</b> accepte deux moyens : email/mot de passe, ou un compte Google déjà associé à un compte existant — Google n'est jamais un moyen d'inscription, une tentative de connexion Google sans compte existant est refusée.</p>
+
+  <h3>Description détaillée des cinq cas d'utilisation principaux</h3>
+
+  <h4>1. Gérer les comptes utilisateurs</h4>
+  <table>
+    <tr><th style="width:20%;">Acteur principal</th><td>Administrateur</td></tr>
+    <tr><th>Objectif</th><td>Permettre à un administrateur de gérer les comptes des utilisateurs de la plateforme (statut, rôle).</td></tr>
+    <tr><th>Précondition</th><td>L'administrateur est authentifié.</td></tr>
+    <tr><th>Scénario nominal</th><td>1. Accès à la liste des comptes utilisateurs.<br>2. Recherche par nom/email, filtre par statut.<br>3. Activation ou désactivation d'un compte.<br>4. Promotion ou rétrogradation du rôle (utilisateur ⇄ administrateur).<br>5. Suppression d'un compte si nécessaire.</td></tr>
+    <tr><th>Postcondition</th><td>L'état du compte ciblé (statut, rôle, ou existence) est mis à jour en conséquence.</td></tr>
+    <tr><th>Exception</th><td>Tentative d'un administrateur de désactiver, rétrograder ou supprimer son propre compte → refusée (garde-fou anti-auto-modification). Tentative d'accès par un utilisateur non administrateur → accès refusé.</td></tr>
+  </table>
+
+  <h4>2. Lancer une analyse</h4>
+  <table>
+    <tr><th style="width:20%;">Acteur principal</th><td>Utilisateur</td></tr>
+    <tr><th>Objectif</th><td>Permettre à l'utilisateur de demander l'analyse de sécurité d'un site web.</td></tr>
+    <tr><th>Précondition</th><td>L'utilisateur est authentifié.</td></tr>
+    <tr><th>Scénario nominal</th><td>1. Saisie de l'URL du site.<br>2. Validation du format par le système.<br>3. Déclenchement du cas « Traiter l'analyse ».<br>4. Confirmation affichée à l'utilisateur.</td></tr>
+    <tr><th>Postcondition</th><td>Une analyse est en cours de traitement.</td></tr>
+    <tr><th>Exception</th><td>URL invalide ou site inaccessible → message d'erreur, aucune analyse lancée.</td></tr>
+  </table>
+
+  <h4>3. Traiter l'analyse</h4>
+  <table>
+    <tr><th style="width:20%;">Acteur principal</th><td>Système</td></tr>
+    <tr><th>Objectif</th><td>Exécuter automatiquement les vérifications de sécurité et produire un résultat exploitable.</td></tr>
+    <tr><th>Précondition</th><td>Le cas « Lancer une analyse » a été déclenché avec une URL valide.</td></tr>
+    <tr><th>Scénario nominal</th><td>1. Vérification de l'hôte (protection contre le sondage d'adresses réseau internes).<br>2. Exécution des 7 contrôles : HTTPS, certificat SSL, en-têtes de sécurité, cookies, vulnérabilités, fichiers exposés, sécurité email (SPF/DMARC).<br>3. Calcul du score et du niveau de risque.<br>4. Génération des recommandations, en langage compréhensible par un non-technicien.<br>5. Génération du rapport PDF.<br>6. Enregistrement en base de données.<br>7. Notification de l'utilisateur si l'analyse était suivie en arrière-plan (« Être notifié de la fin d'une analyse »).</td></tr>
+    <tr><th>Postcondition</th><td>Un rapport d'analyse est disponible et associé à l'utilisateur.</td></tr>
+    <tr><th>Exception</th><td>Site inaccessible, timeout, ou adresse réseau non autorisée (privée/interne) → analyse marquée en échec avec un motif explicite, utilisateur notifié.</td></tr>
+  </table>
+
+  <h4>4. Consulter les rapports</h4>
+  <table>
+    <tr><th style="width:20%;">Acteur principal</th><td>Utilisateur</td></tr>
+    <tr><th>Objectif</th><td>Permettre à l'utilisateur de revoir ses analyses passées et d'en récupérer le détail.</td></tr>
+    <tr><th>Précondition</th><td>L'utilisateur est authentifié et possède au moins une analyse terminée.</td></tr>
+    <tr><th>Scénario nominal</th><td>1. Accès à l'historique.<br>2. Affichage de la liste (date, site, score, risque).<br>3. Sélection d'une analyse.<br>4. Affichage du détail.<br>5. Téléchargement possible du PDF.</td></tr>
+    <tr><th>Postcondition</th><td>L'utilisateur a consulté ou téléchargé le rapport souhaité.</td></tr>
+    <tr><th>Exception</th><td>Aucune analyse enregistrée → message indiquant l'absence d'historique.</td></tr>
+  </table>
+
+  <h4>5. Modérer les analyses</h4>
+  <table>
+    <tr><th style="width:20%;">Acteur principal</th><td>Administrateur</td></tr>
+    <tr><th>Objectif</th><td>Permettre à un administrateur de superviser l'ensemble des analyses de la plateforme, tous utilisateurs confondus, et d'en supprimer une si nécessaire.</td></tr>
+    <tr><th>Précondition</th><td>L'administrateur est authentifié.</td></tr>
+    <tr><th>Scénario nominal</th><td>1. Accès à la liste globale des analyses.<br>2. Affichage de toutes les analyses avec leur propriétaire, indépendamment de l'utilisateur connecté.<br>3. Recherche par URL ou par propriétaire, filtre par niveau de risque.<br>4. Consultation du détail d'une analyse.<br>5. Suppression de l'analyse (et de son rapport PDF associé) si nécessaire.</td></tr>
+    <tr><th>Postcondition</th><td>La liste reflète l'état courant des analyses ; une analyse supprimée n'est plus consultable.</td></tr>
+    <tr><th>Exception</th><td>Tentative d'accès par un utilisateur non administrateur → accès refusé.</td></tr>
+  </table>
+
+  <!-- ============ 6. DIAGRAMME ============ -->
+  <h2 class="section">6. Diagramme de cas d'utilisation</h2>
+  <p>3 acteurs, 11 cas d'utilisation, une relation de généralisation (Administrateur hérite d'Utilisateur) et deux familles de relations d'inclusion : les 6 cas déclenchés par l'Utilisateur incluent tous « S'authentifier » (vérification de session), et « Lancer une analyse » inclut « Traiter l'analyse ».</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 1000 770" width="100%" height="auto" role="img" aria-label="Diagramme de cas d'utilisation">
+      <rect x="160" y="20" width="700" height="730" rx="8" fill="none" stroke="#000" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <text x="510" y="12" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700">CyberGuard Bénin</text>
+
+      <g stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="70" cy="196" r="11"/>
+        <line x1="70" y1="207" x2="70" y2="245"/>
+        <line x1="52" y1="220" x2="88" y2="220"/>
+        <line x1="70" y1="245" x2="55" y2="270"/>
+        <line x1="70" y1="245" x2="85" y2="270"/>
+      </g>
+      <text x="70" y="290" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700">Utilisateur</text>
+
+      <g stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="70" cy="615" r="11"/>
+        <line x1="70" y1="626" x2="70" y2="664"/>
+        <line x1="52" y1="639" x2="88" y2="639"/>
+        <line x1="70" y1="664" x2="55" y2="689"/>
+        <line x1="70" y1="664" x2="85" y2="689"/>
+      </g>
+      <text x="70" y="709" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700">Administrateur</text>
+
+      <line x1="70" y1="594" x2="70" y2="308" stroke="#000" stroke-width="1.4"/>
+      <polygon points="70,300 60,318 80,318" fill="#fff" stroke="#000" stroke-width="1.4"/>
+
+      <g stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="935" cy="289" r="11"/>
+        <line x1="935" y1="300" x2="935" y2="338"/>
+        <line x1="917" y1="313" x2="953" y2="313"/>
+        <line x1="935" y1="338" x2="920" y2="363"/>
+        <line x1="935" y1="338" x2="950" y2="363"/>
+      </g>
+      <text x="935" y="383" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700">Système</text>
+
+      <!-- cas déclenchés directement par l'Utilisateur -->
+      <g font-family="Arial" font-size="11.5" font-weight="600" text-anchor="middle">
+        <ellipse cx="305" cy="75" rx="105" ry="28" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="79">Gérer son compte</text>
+
+        <ellipse cx="305" cy="143" rx="105" ry="28" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="147">Se connecter</text>
+
+        <ellipse cx="305" cy="211" rx="105" ry="28" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="215">Lancer une analyse</text>
+
+        <ellipse cx="305" cy="279" rx="105" ry="28" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="283">Consulter les rapports</text>
+
+        <ellipse cx="305" cy="347" rx="105" ry="28" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="351">Consulter le tableau de bord</text>
+
+        <ellipse cx="305" cy="420" rx="135" ry="32" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="416">Être notifié de la fin</text>
+        <text x="305" y="430">d'une analyse</text>
+
+        <ellipse cx="305" cy="545" rx="118" ry="28" fill="#e6e6e6" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="549">Gérer les comptes utilisateurs</text>
+
+        <ellipse cx="305" cy="615" rx="95" ry="28" fill="#e6e6e6" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="619">Modérer les analyses</text>
+
+        <ellipse cx="305" cy="685" rx="118" ry="28" fill="#e6e6e6" stroke="#000" stroke-width="1.4"/>
+        <text x="305" y="689">Administrer la plateforme</text>
+      </g>
+
+      <!-- cas inclus : vérification de session, commune à tous les cas ci-dessus -->
+      <g font-family="Arial" font-size="11.5" font-weight="600" text-anchor="middle">
+        <ellipse cx="595" cy="185" rx="92" ry="28" fill="#ddeeff" stroke="#000" stroke-width="1.4"/>
+        <text x="595" y="189">S'authentifier</text>
+      </g>
+
+      <!-- cas Système, inclus par « Lancer une analyse » -->
+      <g font-family="Arial" font-size="11.5" font-weight="600" text-anchor="middle">
+        <ellipse cx="790" cy="310" rx="92" ry="28" fill="#e6e6e6" stroke="#000" stroke-width="1.4"/>
+        <text x="790" y="314">Traiter l'analyse</text>
+      </g>
+
+      <!-- lignes d'association acteur → cas -->
+      <g stroke="#555" stroke-width="1.2">
+        <line x1="92" y1="150" x2="200" y2="78"/>
+        <line x1="92" y1="175" x2="200" y2="145"/>
+        <line x1="92" y1="196" x2="200" y2="211"/>
+        <line x1="92" y1="215" x2="200" y2="277"/>
+        <line x1="92" y1="240" x2="200" y2="343"/>
+        <line x1="92" y1="258" x2="178" y2="405"/>
+        <line x1="92" y1="605" x2="190" y2="550"/>
+        <line x1="92" y1="615" x2="212" y2="615"/>
+        <line x1="92" y1="645" x2="190" y2="680"/>
+        <line x1="898" y1="310" x2="882" y2="310"/>
+      </g>
+
+      <!-- inclusions : les 6 cas Utilisateur incluent S'authentifier -->
+      <g stroke="#000" stroke-width="1.1" stroke-dasharray="4 3" fill="none">
+        <line x1="410" y1="78" x2="524" y2="163"/>
+        <polygon points="530,168 516,165 522,177" fill="#000" stroke="none"/>
+
+        <line x1="410" y1="145" x2="512" y2="172"/>
+        <polygon points="521,175 507,175 512,187" fill="#000" stroke="none"/>
+
+        <line x1="410" y1="208" x2="512" y2="197"/>
+        <polygon points="521,196 508,190 510,203" fill="#000" stroke="none"/>
+
+        <line x1="410" y1="270" x2="530" y2="207"/>
+        <polygon points="539,203 525,204 532,216" fill="#000" stroke="none"/>
+
+        <line x1="410" y1="335" x2="545" y2="200"/>
+        <polygon points="552,192 540,197 549,207" fill="#000" stroke="none"/>
+
+        <line x1="440" y1="400" x2="558" y2="207"/>
+        <polygon points="558,207 557,223 545,215" fill="#000" stroke="none"/>
+      </g>
+      <text x="470" y="130" text-anchor="middle" font-family="Arial" font-size="10.5" font-weight="700">«include»</text>
+      <text x="480" y="245" text-anchor="middle" font-family="Arial" font-size="10.5" font-weight="700">«include»</text>
+
+      <!-- inclusion : Lancer une analyse → Traiter l'analyse -->
+      <line x1="405" y1="225" x2="700" y2="298" stroke="#000" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <polygon points="708,301 693,296 696,308" fill="#000"/>
+      <text x="560" y="278" text-anchor="middle" font-family="Arial" font-size="11.5" font-weight="700">«include»</text>
+    </svg>
+  </div>
+  <p class="callout">Diagramme conforme au fonctionnement réel du backend : chaque route protégée passe par le middleware <span class="mono">auth:sanctum</span> (« S'authentifier »), et la soumission d'une URL (« Lancer une analyse ») déclenche automatiquement le traitement en tâche de fond (« Traiter l'analyse ») via une file d'attente. « Modérer les analyses » s'appuie sur la même table que « Consulter les rapports », sans restriction au propriétaire pour un administrateur ; « Être notifié de la fin d'une analyse » est un mécanisme purement côté client (aucune table dédiée), qui interroge périodiquement le statut d'une analyse suivie.</p>
+
+  <!-- ============ 7. DIAGRAMME DE CLASSES ============ -->
+  <h2 class="section">7. Diagramme de classes</h2>
+  <p>4 classes persistées (cf. <span class="mono">schema.sql</span>) : <b>Utilisateur</b> (dont hérite <b>Administrateur</b>), <b>Analyse</b>, <b>Controle</b>, <b>ParametreScore</b>. Une relation d'héritage, deux relations d'agrégation (un utilisateur possède ses analyses, une analyse contient ses contrôles) et une dépendance de configuration entre l'administrateur et les paramètres de scoring.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 940 560" width="100%" height="auto" role="img" aria-label="Diagramme de classes">
+
+      <!-- Utilisateur -->
+      <g font-family="Arial">
+        <rect x="40" y="40" width="230" height="200" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="155" y="58" text-anchor="middle" font-size="12.5" font-weight="700">Utilisateur</text>
+        <line x1="40" y1="70" x2="270" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="52" y="86">- id : entier</text>
+          <text x="52" y="99">- nom : chaîne</text>
+          <text x="52" y="112">- email : chaîne</text>
+          <text x="52" y="125">- motDePasse : chaîne</text>
+          <text x="52" y="138">- role : énumération</text>
+          <text x="52" y="151">- statut : énumération</text>
+          <text x="52" y="164">- dateInscription : date</text>
+        </g>
+        <line x1="40" y1="176" x2="270" y2="176" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="52" y="190">+ sInscrire()</text>
+          <text x="52" y="203">+ authentifier()</text>
+          <text x="52" y="216">+ modifierProfil()</text>
+          <text x="52" y="229">+ reinitialiserMotDePasse()</text>
+        </g>
+      </g>
+
+      <!-- Administrateur -->
+      <g font-family="Arial">
+        <rect x="40" y="300" width="230" height="109" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="155" y="318" text-anchor="middle" font-size="12.5" font-weight="700">Administrateur</text>
+        <line x1="40" y1="330" x2="270" y2="330" stroke="#000" stroke-width="1.2"/>
+        <text x="155" y="344" text-anchor="middle" font-size="9" font-style="italic" fill="#333">(hérite des attributs d'Utilisateur)</text>
+        <line x1="40" y1="352" x2="270" y2="352" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="52" y="366">+ gererComptesUtilisateurs()</text>
+          <text x="52" y="379">+ modererAnalyses()</text>
+          <text x="52" y="392">+ administrerPlateforme()</text>
+        </g>
+      </g>
+
+      <!-- Analyse -->
+      <g font-family="Arial">
+        <rect x="340" y="40" width="230" height="216" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="455" y="58" text-anchor="middle" font-size="12.5" font-weight="700">Analyse</text>
+        <line x1="340" y1="70" x2="570" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="352" y="86">- id : entier</text>
+          <text x="352" y="99">- utilisateurId : entier</text>
+          <text x="352" y="112">- url : chaîne</text>
+          <text x="352" y="125">- dateAnalyse : date</text>
+          <text x="352" y="138">- score : entier</text>
+          <text x="352" y="151">- niveauRisque : énumération</text>
+          <text x="352" y="164">- statut : énumération</text>
+          <text x="352" y="177">- motifEchec : chaîne</text>
+          <text x="352" y="190">- cheminRapportPdf : chaîne</text>
+        </g>
+        <line x1="340" y1="202" x2="570" y2="202" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="352" y="216">+ lancer()</text>
+          <text x="352" y="229">+ genererRapportPdf()</text>
+        </g>
+      </g>
+
+      <!-- Controle -->
+      <g font-family="Arial">
+        <rect x="640" y="40" width="260" height="145" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="770" y="58" text-anchor="middle" font-size="12.5" font-weight="700">Controle</text>
+        <line x1="640" y1="70" x2="900" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="652" y="86">- id : entier</text>
+          <text x="652" y="99">- analyseId : entier</text>
+          <text x="652" y="112">- type : chaîne</text>
+          <text x="652" y="125">- statut : énumération</text>
+          <text x="652" y="138">- description : texte</text>
+          <text x="652" y="151">- recommandation : texte</text>
+        </g>
+        <line x1="640" y1="163" x2="900" y2="163" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="652" y="177">+ verifier()</text>
+        </g>
+      </g>
+
+      <!-- ParametreScore -->
+      <g font-family="Arial">
+        <rect x="340" y="300" width="230" height="245" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="455" y="318" text-anchor="middle" font-size="12.5" font-weight="700">ParametreScore</text>
+        <line x1="340" y1="330" x2="570" y2="330" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="352" y="345">- id : entier</text>
+          <text x="352" y="358">- poidsHttps : entier</text>
+          <text x="352" y="371">- poidsCertificatSsl : entier</text>
+          <text x="352" y="384">- poidsEnTetes : entier</text>
+          <text x="352" y="397">- poidsCookies : entier</text>
+          <text x="352" y="410">- poidsVulnerabilites : entier</text>
+          <text x="352" y="423">- poidsFichiersExposes : entier</text>
+          <text x="352" y="436">- poidsEmailSecurise : entier</text>
+          <text x="352" y="449">- seuilBon : entier</text>
+          <text x="352" y="462">- seuilMoyen : entier</text>
+        </g>
+        <line x1="340" y1="474" x2="570" y2="474" stroke="#000" stroke-width="1.2"/>
+        <g font-size="10" fill="#000">
+          <text x="352" y="488">+ mettreAJour()</text>
+        </g>
+      </g>
+
+      <!-- Relations -->
+      <g stroke="#000" fill="none">
+        <!-- generalisation Administrateur -> Utilisateur -->
+        <line x1="155" y1="300" x2="155" y2="248" stroke-width="1.4"/>
+        <polygon points="155,240 143,248 167,248" fill="#fff" stroke="#000" stroke-width="1.4"/>
+
+        <!-- association Utilisateur / Analyse (possede) -->
+        <line x1="270" y1="140" x2="340" y2="140" stroke-width="1.2"/>
+        <!-- association Analyse / Controle (contient) -->
+        <line x1="570" y1="135" x2="640" y2="113" stroke-width="1.2"/>
+
+        <!-- dependance Administrateur -> ParametreScore (configure) -->
+        <line x1="270" y1="348" x2="330" y2="380" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <polygon points="340,384 326,381 330,393" fill="#000" stroke="none"/>
+      </g>
+
+      <g font-family="Arial" font-size="10" fill="#000">
+        <text x="278" y="133">1</text>
+        <text x="330" y="133" text-anchor="end">0..*</text>
+        <text x="305" y="126" text-anchor="middle" font-weight="700">possède</text>
+
+        <text x="578" y="128">1</text>
+        <text x="628" y="106" text-anchor="end">0..*</text>
+        <text x="605" y="115" text-anchor="middle" font-weight="700">contient</text>
+
+        <text x="278" y="358" text-anchor="middle" font-weight="700">«configure»</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ 8. DIAGRAMMES DE SEQUENCE ============ -->
+  <h2 class="section">8. Diagrammes de séquence</h2>
+  <p>Un diagramme de séquence par cas d'utilisation décrit à la section précédente, entre l'Utilisateur, le Système et la base de données.</p>
+
+  <h3>8.1 Gérer les comptes utilisateurs</h3>
+  <p>Liste des comptes avec recherche et filtre par statut, puis modification optionnelle (statut, rôle ou suppression), protégée par un garde-fou anti-auto-modification.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 920 480" width="100%" height="auto" role="img" aria-label="Diagramme de séquence — Gérer les comptes utilisateurs">
+
+      <g font-family="Arial">
+        <rect x="20" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="110" y="41" text-anchor="middle" font-size="12" font-weight="700">Administrateur</text>
+
+        <rect x="390" y="20" width="160" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="470" y="41" text-anchor="middle" font-size="12" font-weight="700">Système</text>
+
+        <rect x="740" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="830" y="41" text-anchor="middle" font-size="12" font-weight="700">Base de données</text>
+      </g>
+
+      <g stroke="#000" stroke-width="1" stroke-dasharray="4 3">
+        <line x1="110" y1="54" x2="110" y2="460"/>
+        <line x1="470" y1="54" x2="470" y2="460"/>
+        <line x1="830" y1="54" x2="830" y2="460"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5">
+        <!-- 1: Administrateur -> Système : accéderListeUtilisateurs -->
+        <line x1="110" y1="90" x2="460" y2="90" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,90 460,86 460,94" fill="#000"/>
+        <text x="290" y="84" text-anchor="middle" font-weight="700">accéderListeUtilisateurs(recherche, filtres)</text>
+
+        <!-- 2: Système -> BDD : récupérerUtilisateurs -->
+        <line x1="470" y1="124" x2="820" y2="124" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,124 820,120 820,128" fill="#000"/>
+        <text x="650" y="118" text-anchor="middle" font-weight="700">récupérerUtilisateurs(filtres)</text>
+
+        <!-- 3: BDD -> Système : liste (retour) -->
+        <line x1="830" y1="158" x2="480" y2="158" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,154 480,158 488,162" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="152" text-anchor="middle" font-style="italic">liste</text>
+
+        <!-- 4: Système -> Administrateur : afficherListe -->
+        <line x1="460" y1="192" x2="120" y2="192" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,192 120,188 120,196" fill="#000"/>
+        <text x="290" y="186" text-anchor="middle" font-weight="700">afficherListe(utilisateurs)</text>
+
+        <!-- OPT FRAME : modification d'un compte -->
+        <rect x="70" y="214" width="780" height="200" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,214 108,214 108,224 98,230 70,230" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="89" y="225" text-anchor="middle" font-size="8" font-weight="700">opt</text>
+        <text x="115" y="225" font-size="8.5" font-style="italic">[modification d'un compte : statut, rôle ou suppression]</text>
+
+        <line x1="110" y1="250" x2="460" y2="250" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,250 460,246 460,254" fill="#000"/>
+        <text x="290" y="244" text-anchor="middle" font-weight="700">modifierCompte(id, action)</text>
+
+        <line x1="470" y1="280" x2="504" y2="280" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="280" x2="504" y2="294" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="294" x2="470" y2="294" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,294 480,290 480,298" fill="#000"/>
+        <text x="510" y="291" font-weight="700">vérifierPasAutoModification(id)</text>
+
+        <line x1="470" y1="322" x2="820" y2="322" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,322 820,318 820,326" fill="#000"/>
+        <text x="650" y="316" text-anchor="middle" font-weight="700">appliquer(action)</text>
+
+        <line x1="830" y1="356" x2="480" y2="356" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,352 480,356 488,360" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="350" text-anchor="middle" font-style="italic">ok</text>
+
+        <line x1="460" y1="390" x2="120" y2="390" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,390 120,386 120,394" fill="#000"/>
+        <text x="290" y="384" text-anchor="middle" font-weight="700">confirmer()</text>
+      </g>
+
+      <text x="470" y="434" text-anchor="middle" font-family="Arial" font-size="9" font-style="italic" fill="#444">Si id correspond au compte de l'administrateur connecté → refus (422), quelle que soit l'action demandée</text>
+      <text x="470" y="447" text-anchor="middle" font-family="Arial" font-size="9" font-style="italic" fill="#444">(statut, rôle ou suppression) — garde-fou anti-auto-modification.</text>
+    </svg>
+  </div>
+
+  <h3>8.2 Lancer une analyse</h3>
+  <p>« Lancer une analyse » déclenche automatiquement « Traiter l'analyse » (relation «include» du diagramme de cas d'utilisation) — voir section 8.3.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 920 360" width="100%" height="auto" role="img" aria-label="Diagramme de séquence — Lancer une analyse">
+
+      <g font-family="Arial">
+        <rect x="35" y="20" width="150" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="110" y="41" text-anchor="middle" font-size="12" font-weight="700">Utilisateur</text>
+
+        <rect x="390" y="20" width="160" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="470" y="41" text-anchor="middle" font-size="12" font-weight="700">Système</text>
+
+        <rect x="740" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="830" y="41" text-anchor="middle" font-size="12" font-weight="700">Base de données</text>
+      </g>
+
+      <g stroke="#000" stroke-width="1" stroke-dasharray="4 3">
+        <line x1="110" y1="54" x2="110" y2="340"/>
+        <line x1="470" y1="54" x2="470" y2="340"/>
+        <line x1="830" y1="54" x2="830" y2="340"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5">
+        <!-- 1: Utilisateur -> Système : saisirURL -->
+        <line x1="110" y1="90" x2="460" y2="90" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,90 460,86 460,94" fill="#000"/>
+        <text x="290" y="84" text-anchor="middle" font-weight="700">saisirURL(url)</text>
+
+        <!-- 2: self Système : validerFormatURL -->
+        <line x1="470" y1="124" x2="504" y2="124" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="124" x2="504" y2="138" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="138" x2="470" y2="138" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,138 480,134 480,142" fill="#000"/>
+        <text x="510" y="135" font-weight="700">validerFormatURL(url)</text>
+
+        <!-- ALT FRAME : URL invalide -->
+        <rect x="70" y="146" width="440" height="50" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,146 104,146 104,156 94,162 70,162" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="87" y="157" text-anchor="middle" font-size="8" font-weight="700">alt</text>
+        <text x="110" y="157" font-size="8.5" font-style="italic">[URL invalide ou site inaccessible] — fin</text>
+
+        <line x1="460" y1="180" x2="120" y2="180" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,180 120,176 120,184" fill="#000"/>
+        <text x="290" y="174" text-anchor="middle" font-weight="700">afficherErreur(« URL invalide »)</text>
+
+        <!-- 3: Système -> BDD : créerAnalyse -->
+        <line x1="470" y1="214" x2="820" y2="214" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,214 820,210 820,218" fill="#000"/>
+        <text x="650" y="208" text-anchor="middle" font-weight="700">créerAnalyse(statut = « en_cours »)</text>
+
+        <!-- 4: BDD -> Système : id (retour) -->
+        <line x1="830" y1="248" x2="480" y2="248" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,244 480,248 488,252" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="242" text-anchor="middle" font-style="italic">id</text>
+
+        <!-- 5: Système -> Utilisateur : confirmerLancement -->
+        <line x1="460" y1="282" x2="120" y2="282" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,282 120,278 120,286" fill="#000"/>
+        <text x="290" y="276" text-anchor="middle" font-weight="700">confirmerLancement()</text>
+
+        <line x1="470" y1="296" x2="470" y2="310" stroke="#666" stroke-width="1.1"/>
+        <polygon points="470,314 465,306 475,306" fill="#666"/>
+        <text x="470" y="328" text-anchor="middle" font-size="9" font-style="italic" fill="#444">déclenche «Traiter l'analyse» (8.3)</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>8.3 Traiter l'analyse</h3>
+  <p>Enchaînement déclenché automatiquement à la suite de « Lancer une analyse » (8.2).</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 920 700" width="100%" height="auto" role="img" aria-label="Diagramme de séquence — Traiter l'analyse">
+
+      <g font-family="Arial">
+        <rect x="35" y="20" width="150" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="110" y="41" text-anchor="middle" font-size="12" font-weight="700">Utilisateur</text>
+
+        <rect x="390" y="20" width="160" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="470" y="41" text-anchor="middle" font-size="12" font-weight="700">Système</text>
+
+        <rect x="740" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="830" y="41" text-anchor="middle" font-size="12" font-weight="700">Base de données</text>
+      </g>
+
+      <g stroke="#000" stroke-width="1" stroke-dasharray="4 3">
+        <line x1="110" y1="54" x2="110" y2="680"/>
+        <line x1="470" y1="54" x2="470" y2="680"/>
+        <line x1="830" y1="54" x2="830" y2="680"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5">
+        <!-- self Système : garde SSRF, puis les 7 contrôles -->
+        <line x1="470" y1="90" x2="504" y2="90" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="90" x2="504" y2="104" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="104" x2="470" y2="104" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,104 480,100 480,108" fill="#000"/>
+        <text x="510" y="101" font-weight="700">vérifierHôteAutorisé()</text>
+
+        <line x1="470" y1="120" x2="504" y2="120" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="120" x2="504" y2="134" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="134" x2="470" y2="134" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,134 480,130 480,138" fill="#000"/>
+        <text x="510" y="131" font-weight="700">vérifierHTTPS()</text>
+
+        <line x1="470" y1="150" x2="504" y2="150" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="150" x2="504" y2="164" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="164" x2="470" y2="164" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,164 480,160 480,168" fill="#000"/>
+        <text x="510" y="161" font-weight="700">contrôlerCertificatSSL()</text>
+
+        <line x1="470" y1="180" x2="504" y2="180" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="180" x2="504" y2="194" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="194" x2="470" y2="194" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,194 480,190 480,198" fill="#000"/>
+        <text x="510" y="191" font-weight="700">analyserEnTêtesSécurité()</text>
+
+        <line x1="470" y1="210" x2="504" y2="210" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="210" x2="504" y2="224" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="224" x2="470" y2="224" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,224 480,220 480,228" fill="#000"/>
+        <text x="510" y="221" font-weight="700">vérifierCookies()</text>
+
+        <line x1="470" y1="240" x2="504" y2="240" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="240" x2="504" y2="254" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="254" x2="470" y2="254" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,254 480,250 480,258" fill="#000"/>
+        <text x="510" y="251" font-weight="700">rechercherVulnérabilités()</text>
+
+        <line x1="470" y1="270" x2="504" y2="270" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="270" x2="504" y2="284" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="284" x2="470" y2="284" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,284 480,280 480,288" fill="#000"/>
+        <text x="510" y="281" font-weight="700">vérifierFichiersExposés()</text>
+
+        <line x1="470" y1="300" x2="504" y2="300" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="300" x2="504" y2="314" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="314" x2="470" y2="314" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,314 480,310 480,318" fill="#000"/>
+        <text x="510" y="311" font-weight="700">vérifierSécuritéEmail()</text>
+
+        <!-- ALT FRAME : adresse non autorisée / site inaccessible / timeout -->
+        <rect x="70" y="332" width="820" height="76" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,332 104,332 104,342 94,348 70,348" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="87" y="343" text-anchor="middle" font-size="8" font-weight="700">alt</text>
+        <text x="110" y="343" font-size="8.5" font-style="italic">[adresse non autorisée, site inaccessible ou timeout] — échec, motif enregistré, fin</text>
+
+        <line x1="470" y1="362" x2="820" y2="362" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,362 820,358 820,366" fill="#000"/>
+        <text x="650" y="356" text-anchor="middle" font-weight="700">mettreAJourStatut(« echec », motifEchec)</text>
+
+        <line x1="460" y1="388" x2="120" y2="388" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,388 120,384 120,392" fill="#000"/>
+        <text x="290" y="382" text-anchor="middle" font-weight="700">notifierEchec(motif)</text>
+
+        <!-- self Système : score, recommandations, pdf -->
+        <line x1="470" y1="426" x2="504" y2="426" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="426" x2="504" y2="440" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="440" x2="470" y2="440" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,440 480,436 480,444" fill="#000"/>
+        <text x="510" y="437" font-weight="700">calculerScoreEtRisque()</text>
+
+        <line x1="470" y1="456" x2="504" y2="456" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="456" x2="504" y2="470" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="470" x2="470" y2="470" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,470 480,466 480,474" fill="#000"/>
+        <text x="510" y="467" font-weight="700">genererRecommandations()</text>
+
+        <line x1="470" y1="486" x2="504" y2="486" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="486" x2="504" y2="500" stroke="#000" stroke-width="1.2"/>
+        <line x1="504" y1="500" x2="470" y2="500" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,500 480,496 480,504" fill="#000"/>
+        <text x="510" y="497" font-weight="700">genererRapportPDF()</text>
+
+        <!-- Système -> BDD : enregistrerResultat -->
+        <line x1="470" y1="524" x2="820" y2="524" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,524 820,520 820,528" fill="#000"/>
+        <text x="650" y="518" text-anchor="middle" font-weight="700">enregistrerResultat(score, risque, pdf)</text>
+
+        <!-- BDD -> Système : ok (retour) -->
+        <line x1="830" y1="558" x2="480" y2="558" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,554 480,558 488,562" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="552" text-anchor="middle" font-style="italic">ok</text>
+
+        <!-- Système -> Utilisateur : mettreRapportADisposition -->
+        <line x1="460" y1="592" x2="120" y2="592" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,592 120,588 120,596" fill="#000"/>
+        <text x="290" y="586" text-anchor="middle" font-weight="700">mettreRapportADisposition()</text>
+      </g>
+    </svg>
+  </div>
+  <p class="callout">Le traitement est délégué à une file d'attente (tâche de fond) : le cas « Lancer une analyse » (8.2) reçoit une confirmation immédiate pendant que « Traiter l'analyse » s'exécute en parallèle, ce qui explique pourquoi il n'y a pas d'attente bloquante côté Utilisateur entre les deux diagrammes. C'est également ce mécanisme de file d'attente qui permet au cas « Être notifié de la fin d'une analyse » d'exister : le frontend interroge périodiquement le statut d'une analyse suivie, et affiche une notification dès que le traitement en arrière-plan se termine.</p>
+
+  <h3>8.4 Consulter les rapports</h3>
+  <p>Consultation de l'historique des analyses et, en option, téléchargement du rapport PDF d'une analyse.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 920 500" width="100%" height="auto" role="img" aria-label="Diagramme de séquence — Consulter les rapports">
+
+      <g font-family="Arial">
+        <rect x="35" y="20" width="150" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="110" y="41" text-anchor="middle" font-size="12" font-weight="700">Utilisateur</text>
+
+        <rect x="390" y="20" width="160" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="470" y="41" text-anchor="middle" font-size="12" font-weight="700">Système</text>
+
+        <rect x="740" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="830" y="41" text-anchor="middle" font-size="12" font-weight="700">Base de données</text>
+      </g>
+
+      <g stroke="#000" stroke-width="1" stroke-dasharray="4 3">
+        <line x1="110" y1="54" x2="110" y2="480"/>
+        <line x1="470" y1="54" x2="470" y2="480"/>
+        <line x1="830" y1="54" x2="830" y2="480"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5">
+        <!-- 1: Utilisateur -> Système : accederHistorique -->
+        <line x1="110" y1="90" x2="460" y2="90" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,90 460,86 460,94" fill="#000"/>
+        <text x="290" y="84" text-anchor="middle" font-weight="700">accéderHistorique()</text>
+
+        <!-- 2: Système -> BDD : recupererAnalyses -->
+        <line x1="470" y1="124" x2="820" y2="124" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,124 820,120 820,128" fill="#000"/>
+        <text x="650" y="118" text-anchor="middle" font-weight="700">récupérerAnalyses(utilisateurId)</text>
+
+        <!-- 3: BDD -> Système : liste (retour) -->
+        <line x1="830" y1="158" x2="480" y2="158" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,154 480,158 488,162" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="152" text-anchor="middle" font-style="italic">liste</text>
+
+        <!-- ALT FRAME : aucune analyse -->
+        <rect x="70" y="170" width="440" height="50" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,170 104,170 104,180 94,186 70,186" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="87" y="181" text-anchor="middle" font-size="8" font-weight="700">alt</text>
+        <text x="110" y="181" font-size="8.5" font-style="italic">[aucune analyse enregistrée] — fin</text>
+
+        <line x1="460" y1="204" x2="120" y2="204" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,204 120,200 120,208" fill="#000"/>
+        <text x="290" y="198" text-anchor="middle" font-weight="700">afficherMessage(« Aucun historique disponible »)</text>
+
+        <!-- 4: Système -> Utilisateur : afficherListe -->
+        <line x1="460" y1="238" x2="120" y2="238" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,238 120,234 120,242" fill="#000"/>
+        <text x="290" y="232" text-anchor="middle" font-weight="700">afficherListe(analyses)</text>
+
+        <!-- 5: Utilisateur -> Système : selectionnerAnalyse -->
+        <line x1="110" y1="272" x2="460" y2="272" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,272 460,268 460,276" fill="#000"/>
+        <text x="290" y="266" text-anchor="middle" font-weight="700">sélectionnerAnalyse(id)</text>
+
+        <!-- 6: Système -> BDD : recupererDetail -->
+        <line x1="470" y1="306" x2="820" y2="306" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,306 820,302 820,310" fill="#000"/>
+        <text x="650" y="300" text-anchor="middle" font-weight="700">récupérerDétail(id)</text>
+
+        <!-- 7: BDD -> Système : detail (retour) -->
+        <line x1="830" y1="340" x2="480" y2="340" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,336 480,340 488,344" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="334" text-anchor="middle" font-style="italic">détail + contrôles</text>
+
+        <!-- 8: Système -> Utilisateur : afficherDetail -->
+        <line x1="460" y1="374" x2="120" y2="374" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,374 120,370 120,378" fill="#000"/>
+        <text x="290" y="368" text-anchor="middle" font-weight="700">afficherDétail()</text>
+
+        <!-- OPT FRAME : telecharger PDF -->
+        <rect x="70" y="386" width="440" height="74" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,386 108,386 108,396 98,402 70,402" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="89" y="397" text-anchor="middle" font-size="8" font-weight="700">opt</text>
+        <text x="115" y="397" font-size="8.5" font-style="italic">[télécharger le PDF]</text>
+
+        <line x1="110" y1="416" x2="460" y2="416" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,416 460,412 460,420" fill="#000"/>
+        <text x="290" y="410" text-anchor="middle" font-weight="700">telechargerRapportPDF()</text>
+
+        <line x1="460" y1="442" x2="120" y2="442" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="128,438 120,442 128,446" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="290" y="436" text-anchor="middle" font-style="italic">fichier PDF</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>8.5 Modérer les analyses</h3>
+  <p>Vue globale réservée à l'Administrateur : mêmes principes de recherche et de filtrage que « Consulter les rapports » (8.4), mais sans restriction au propriétaire, avec une action de suppression supplémentaire.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 920 480" width="100%" height="auto" role="img" aria-label="Diagramme de séquence — Modérer les analyses">
+
+      <g font-family="Arial">
+        <rect x="20" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="110" y="41" text-anchor="middle" font-size="12" font-weight="700">Administrateur</text>
+
+        <rect x="390" y="20" width="160" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="470" y="41" text-anchor="middle" font-size="12" font-weight="700">Système</text>
+
+        <rect x="740" y="20" width="180" height="34" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="830" y="41" text-anchor="middle" font-size="12" font-weight="700">Base de données</text>
+      </g>
+
+      <g stroke="#000" stroke-width="1" stroke-dasharray="4 3">
+        <line x1="110" y1="54" x2="110" y2="460"/>
+        <line x1="470" y1="54" x2="470" y2="460"/>
+        <line x1="830" y1="54" x2="830" y2="460"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5">
+        <!-- 1: Administrateur -> Système : accéderListeAnalyses -->
+        <line x1="110" y1="90" x2="460" y2="90" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,90 460,86 460,94" fill="#000"/>
+        <text x="290" y="84" text-anchor="middle" font-weight="700">accéderListeAnalyses(recherche, filtres)</text>
+
+        <!-- 2: Système -> BDD : récupérerToutesLesAnalyses -->
+        <line x1="470" y1="124" x2="820" y2="124" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,124 820,120 820,128" fill="#000"/>
+        <text x="650" y="118" text-anchor="middle" font-weight="700">récupérerToutesLesAnalyses(filtres)</text>
+
+        <!-- 3: BDD -> Système : liste (retour) -->
+        <line x1="830" y1="158" x2="480" y2="158" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,154 480,158 488,162" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="152" text-anchor="middle" font-style="italic">liste (toutes, avec propriétaires)</text>
+
+        <!-- 4: Système -> Administrateur : afficherListe -->
+        <line x1="460" y1="192" x2="120" y2="192" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,192 120,188 120,196" fill="#000"/>
+        <text x="290" y="186" text-anchor="middle" font-weight="700">afficherListe(analyses)</text>
+
+        <!-- OPT FRAME : suppression -->
+        <rect x="70" y="214" width="780" height="176" fill="none" stroke="#000" stroke-width="1.1" stroke-dasharray="5 4"/>
+        <polygon points="70,214 108,214 108,224 98,230 70,230" fill="#eee" stroke="#000" stroke-width="1"/>
+        <text x="89" y="225" text-anchor="middle" font-size="8" font-weight="700">opt</text>
+        <text x="115" y="225" font-size="8.5" font-style="italic">[suppression d'une analyse]</text>
+
+        <line x1="110" y1="250" x2="460" y2="250" stroke="#000" stroke-width="1.2"/>
+        <polygon points="470,250 460,246 460,254" fill="#000"/>
+        <text x="290" y="244" text-anchor="middle" font-weight="700">supprimerAnalyse(id)</text>
+
+        <line x1="470" y1="284" x2="820" y2="284" stroke="#000" stroke-width="1.2"/>
+        <polygon points="830,284 820,280 820,288" fill="#000"/>
+        <text x="650" y="278" text-anchor="middle" font-weight="700">supprimer(id, rapportPdf)</text>
+
+        <line x1="830" y1="318" x2="480" y2="318" stroke="#000" stroke-width="1.1" stroke-dasharray="4 3"/>
+        <polyline points="488,314 480,318 488,322" fill="none" stroke="#000" stroke-width="1.1"/>
+        <text x="650" y="312" text-anchor="middle" font-style="italic">ok</text>
+
+        <line x1="460" y1="352" x2="120" y2="352" stroke="#000" stroke-width="1.2"/>
+        <polygon points="110,352 120,348 120,356" fill="#000"/>
+        <text x="290" y="346" text-anchor="middle" font-weight="700">confirmerSuppression()</text>
+      </g>
+
+      <text x="470" y="425" text-anchor="middle" font-family="Arial" font-size="9" font-style="italic" fill="#444">Accès protégé par le rôle administrateur : une tentative par un utilisateur normal est refusée (403), y compris via appel direct à l'API.</text>
+    </svg>
+  </div>
+
+  <!-- ============ 9. DIAGRAMME D'OBJETS ============ -->
+  <h2 class="section">9. Diagramme d'objets</h2>
+  <p>Instantiation concrète du diagramme de classes (section 7) à un instant T : un utilisateur ayant lancé une analyse terminée avec 3 contrôles, et le barème de score en vigueur, configuré par un administrateur.</p>
+
+  <div class="diagram-box">
+    <svg viewBox="0 0 940 500" width="100%" height="auto" role="img" aria-label="Diagramme d'objets">
+
+      <!-- utilisateur1 -->
+      <g font-family="Arial">
+        <rect x="40" y="40" width="230" height="140" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="155" y="58" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">utilisateur1 : Utilisateur</text>
+        <line x1="40" y1="70" x2="270" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="52" y="86">id = 12</text>
+          <text x="52" y="99">nom = « Awa Koffi »</text>
+          <text x="52" y="112">email = « awa.koffi@exemple.bj »</text>
+          <text x="52" y="125">motDePasse = « •••••••• »</text>
+          <text x="52" y="138">role = « utilisateur »</text>
+          <text x="52" y="151">statut = « actif »</text>
+          <text x="52" y="164">dateInscription = « 2026-03-14 »</text>
+        </g>
+      </g>
+
+      <!-- admin1 -->
+      <g font-family="Arial">
+        <rect x="40" y="220" width="230" height="110" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="155" y="238" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">admin1 : Administrateur</text>
+        <line x1="40" y1="250" x2="270" y2="250" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="52" y="266">id = 3</text>
+          <text x="52" y="279">nom = « Jean Houngbo »</text>
+          <text x="52" y="292">email = « admin@cyberguard.bj »</text>
+          <text x="52" y="305">role = « administrateur »</text>
+          <text x="52" y="318">statut = « actif »</text>
+        </g>
+      </g>
+
+      <!-- analyse1 -->
+      <g font-family="Arial">
+        <rect x="340" y="40" width="250" height="150" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="465" y="58" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">analyse1 : Analyse</text>
+        <line x1="340" y1="70" x2="590" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="352" y="86">id = 57</text>
+          <text x="352" y="99">utilisateurId = 12</text>
+          <text x="352" y="112">url = « https://exemple-benin.bj »</text>
+          <text x="352" y="125">dateAnalyse = « 2026-07-08 10:32 »</text>
+          <text x="352" y="138">score = 82</text>
+          <text x="352" y="151">niveauRisque = « bon »</text>
+          <text x="352" y="164">statut = « terminee »</text>
+          <text x="352" y="177">cheminRapportPdf = « /rapports/analyse_57.pdf »</text>
+        </g>
+      </g>
+
+      <!-- bareme1 -->
+      <g font-family="Arial">
+        <rect x="340" y="250" width="250" height="220" fill="#f2f2f2" stroke="#000" stroke-width="1.4"/>
+        <text x="465" y="268" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">bareme1 : ParametreScore</text>
+        <line x1="340" y1="280" x2="590" y2="280" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="352" y="296">id = 1</text>
+          <text x="352" y="309">poidsHttps = 20</text>
+          <text x="352" y="322">poidsCertificatSsl = 15</text>
+          <text x="352" y="335">poidsEnTetes = 25</text>
+          <text x="352" y="348">poidsCookies = 10</text>
+          <text x="352" y="361">poidsVulnerabilites = 15</text>
+          <text x="352" y="374">poidsFichiersExposes = 10</text>
+          <text x="352" y="387">poidsEmailSecurise = 5</text>
+          <text x="352" y="400">seuilBon = 75</text>
+          <text x="352" y="413">seuilMoyen = 40</text>
+        </g>
+      </g>
+
+      <!-- controle1 -->
+      <g font-family="Arial">
+        <rect x="660" y="40" width="250" height="125" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="785" y="58" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">controle1 : Controle</text>
+        <line x1="660" y1="70" x2="910" y2="70" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="672" y="86">id = 201</text>
+          <text x="672" y="99">analyseId = 57</text>
+          <text x="672" y="112">type = « https »</text>
+          <text x="672" y="125">statut = « conforme »</text>
+          <text x="672" y="138">description = « HTTPS actif, redirection »</text>
+          <text x="672" y="151">recommandation = « — »</text>
+        </g>
+      </g>
+
+      <!-- controle2 -->
+      <g font-family="Arial">
+        <rect x="660" y="185" width="250" height="125" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="785" y="203" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">controle2 : Controle</text>
+        <line x1="660" y1="215" x2="910" y2="215" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="672" y="231">id = 202</text>
+          <text x="672" y="244">analyseId = 57</text>
+          <text x="672" y="257">type = « en_tetes_securite »</text>
+          <text x="672" y="270">statut = « non_conforme »</text>
+          <text x="672" y="283">description = « CSP absent »</text>
+          <text x="672" y="296">recommandation = « Ajouter un CSP »</text>
+        </g>
+      </g>
+
+      <!-- controle3 -->
+      <g font-family="Arial">
+        <rect x="660" y="335" width="250" height="125" fill="#fff" stroke="#000" stroke-width="1.4"/>
+        <text x="785" y="353" text-anchor="middle" font-size="12" font-weight="700" text-decoration="underline">controle3 : Controle</text>
+        <line x1="660" y1="365" x2="910" y2="365" stroke="#000" stroke-width="1.2"/>
+        <g font-size="9.5" fill="#000">
+          <text x="672" y="381">id = 203</text>
+          <text x="672" y="394">analyseId = 57</text>
+          <text x="672" y="407">type = « certificat_ssl »</text>
+          <text x="672" y="420">statut = « conforme »</text>
+          <text x="672" y="433">description = « Certificat valide (Let's Encrypt) »</text>
+          <text x="672" y="446">recommandation = « — »</text>
+        </g>
+      </g>
+
+      <!-- Liens -->
+      <g stroke="#000" fill="none">
+        <line x1="270" y1="110" x2="340" y2="115" stroke-width="1.2"/>
+        <line x1="590" y1="85" x2="660" y2="95" stroke-width="1.2"/>
+        <line x1="590" y1="120" x2="660" y2="247" stroke-width="1.2"/>
+        <line x1="590" y1="150" x2="660" y2="397" stroke-width="1.2"/>
+        <line x1="270" y1="275" x2="340" y2="318" stroke-width="1.2" stroke-dasharray="5 4"/>
+      </g>
+
+      <g font-family="Arial" font-size="9.5" font-weight="700">
+        <text x="305" y="100" text-anchor="middle">possède</text>
+        <text x="625" y="185" text-anchor="middle">contient</text>
+        <text x="285" y="290" text-anchor="middle" font-size="9">«configure»</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ 10. MAQUETTES ============ -->
+  <h2 class="section">10. Maquettes</h2>
+  <p>Esquisses basse fidélité (wireframes) des 11 écrans identifiés, en noir et blanc. Chaque écran a également une version interactive haute-fidélité disponible séparément.</p>
+
+  <div class="wf-grid">
+
+    <!-- 1. Accueil -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink light"></span></span><span class="wf-btn">Connexion</span></div>
+        <div class="wf-body">
+          <div class="wf-h" style="width:70%;"></div>
+          <div class="wf-p" style="width:90%;"></div>
+          <div class="wf-p" style="width:60%;"></div>
+          <div class="wf-card" style="margin-top:8px;"><div class="wf-x" style="height:20px;"></div></div>
+        </div>
+        <div class="wf-scrim"></div>
+        <div class="wf-modal">
+          <div class="wf-tabs"><span class="wf-tab active">Connexion</span><span class="wf-tab">Inscription</span></div>
+          <div class="wf-input"></div>
+          <div class="wf-input"></div>
+          <span class="wf-btn solid" style="width:100%;text-align:center;display:block;">Se connecter</span>
+        </div>
+      </div>
+      <p class="wf-caption">1. Accueil</p>
+      <p class="wf-desc">Présentation en arrière-plan + formulaire Connexion/Inscription en overlay.</p>
+    </div>
+
+    <!-- 2. Tableau de bord -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink"></span><span class="wf-navlink light"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="margin-bottom:6px;">
+            <div class="wf-col wf-card"><div class="wf-h" style="width:50%;"></div></div>
+            <div class="wf-col wf-card"><div class="wf-h" style="width:50%;"></div></div>
+            <div class="wf-col wf-card"><div class="wf-h" style="width:50%;"></div></div>
+          </div>
+          <div class="wf-card"><div class="wf-x" style="height:26px;"></div></div>
+          <div class="wf-card" style="margin-top:6px;"><div class="wf-p" style="width:100%;"></div><div class="wf-p" style="width:100%;"></div><div class="wf-p" style="width:70%;"></div></div>
+        </div>
+      </div>
+      <p class="wf-caption">2. Tableau de bord</p>
+      <p class="wf-desc">Statistiques personnelles, courbe d'évolution du score, derniers rapports.</p>
+    </div>
+
+    <!-- 3. Nouvelle analyse -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body" style="display:flex;flex-direction:column;align-items:center;padding-top:16px;">
+          <div class="wf-h" style="width:60%;"></div>
+          <div class="wf-input" style="width:80%;margin-top:8px;"></div>
+          <span class="wf-btn solid" style="margin-top:6px;width:50%;text-align:center;">Lancer l'analyse</span>
+          <div class="wf-row" style="width:80%;margin-top:10px;">
+            <div class="wf-col wf-x" style="height:16px;"></div>
+            <div class="wf-col wf-x" style="height:16px;"></div>
+            <div class="wf-col wf-x" style="height:16px;"></div>
+          </div>
+        </div>
+      </div>
+      <p class="wf-caption">3. Nouvelle analyse</p>
+      <p class="wf-desc">Saisie de l'URL, rappel des vérifications, puis état « scan en cours ».</p>
+    </div>
+
+    <!-- 4. Résultat d'analyse -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink light"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="align-items:center;margin-bottom:6px;">
+            <div class="wf-circle" style="width:26px;height:26px;">82</div>
+            <div class="wf-col"><div class="wf-pill">Bon</div><div class="wf-p" style="width:90%;margin-top:3px;"></div></div>
+          </div>
+          <div class="wf-card"><span class="wf-dot filled"></span> <div class="wf-p" style="display:inline-block;width:60%;"></div></div>
+          <div class="wf-card"><span class="wf-dot"></span> <div class="wf-p" style="display:inline-block;width:60%;"></div></div>
+          <div class="wf-card"><span class="wf-dot"></span> <div class="wf-p" style="display:inline-block;width:60%;"></div></div>
+        </div>
+      </div>
+      <p class="wf-caption">4. Résultat d'analyse</p>
+      <p class="wf-desc">Score, niveau de risque, détail des vérifications et recommandations.</p>
+    </div>
+
+    <!-- 5. Historique -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink light"></span><span class="wf-navlink"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="margin-bottom:6px;"><div class="wf-input" style="flex:1;"></div><div class="wf-pill">Bon</div><div class="wf-pill">Moyen</div><div class="wf-pill">Faible</div></div>
+          <div class="wf-card"><div class="wf-p" style="width:100%;"></div></div>
+          <div class="wf-card"><div class="wf-p" style="width:100%;"></div></div>
+          <div class="wf-card"><div class="wf-p" style="width:100%;"></div></div>
+        </div>
+      </div>
+      <p class="wf-caption">5. Historique</p>
+      <p class="wf-desc">Recherche, filtres par niveau de risque, liste des analyses passées.</p>
+    </div>
+
+    <!-- 6. Mon profil -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink light"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="align-items:center;margin-bottom:8px;"><div class="wf-circle" style="width:22px;height:22px;">AD</div><div class="wf-h" style="width:40%;"></div></div>
+          <div class="wf-card"><div class="wf-input"></div><div class="wf-input"></div><span class="wf-btn">Enregistrer</span></div>
+          <div class="wf-card" style="margin-top:6px;"><div class="wf-input"></div><div class="wf-input"></div><span class="wf-btn">Mettre à jour</span></div>
+        </div>
+      </div>
+      <p class="wf-caption">6. Mon profil</p>
+      <p class="wf-desc">Informations personnelles et changement de mot de passe.</p>
+    </div>
+
+    <!-- 7. Mot de passe oublié -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar" style="justify-content:center;"><span class="wf-logo"></span></div>
+        <div class="wf-body" style="display:flex;flex-direction:column;align-items:center;padding-top:20px;">
+          <div class="wf-circle" style="width:20px;height:20px;">✉</div>
+          <div class="wf-h" style="width:60%;margin-top:8px;"></div>
+          <div class="wf-p" style="width:75%;"></div>
+          <div class="wf-input" style="width:75%;margin-top:6px;"></div>
+          <span class="wf-btn solid" style="margin-top:6px;width:60%;text-align:center;">Envoyer le lien</span>
+        </div>
+      </div>
+      <p class="wf-caption">7. Mot de passe oublié</p>
+      <p class="wf-desc">Demande de réinitialisation → confirmation → nouveau mot de passe.</p>
+    </div>
+
+    <!-- 8. Admin - utilisateurs -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="margin-bottom:6px;"><div class="wf-input" style="flex:1;"></div><div class="wf-pill">Tous</div><div class="wf-pill">Actifs</div></div>
+          <div class="wf-row" style="border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:3px;"><div class="wf-p" style="width:35%;"></div><div class="wf-p" style="width:20%;"></div><div class="wf-p" style="width:20%;"></div></div>
+          <div class="wf-row" style="border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:3px;"><div class="wf-p" style="width:35%;"></div><div class="wf-p" style="width:20%;"></div><div class="wf-p" style="width:20%;"></div></div>
+          <div class="wf-row"><div class="wf-p" style="width:35%;"></div><div class="wf-p" style="width:20%;"></div><div class="wf-p" style="width:20%;"></div></div>
+        </div>
+      </div>
+      <p class="wf-caption">8. Administration — utilisateurs</p>
+      <p class="wf-desc">Recherche, filtres, activation/désactivation, rôle et suppression de comptes.</p>
+    </div>
+
+    <!-- 9. Admin - analyses -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink"></span><span class="wf-navlink light"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="margin-bottom:6px;"><div class="wf-input" style="flex:1;"></div><div class="wf-pill">Bon</div><div class="wf-pill">Moyen</div><div class="wf-pill">Faible</div></div>
+          <div class="wf-row" style="border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:3px;align-items:center;"><div class="wf-p" style="width:30%;"></div><div class="wf-p" style="width:20%;"></div><span class="wf-btn" style="font-size:5.5px;">Supprimer</span></div>
+          <div class="wf-row" style="border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:3px;align-items:center;"><div class="wf-p" style="width:30%;"></div><div class="wf-p" style="width:20%;"></div><span class="wf-btn" style="font-size:5.5px;">Supprimer</span></div>
+          <div class="wf-row" style="align-items:center;"><div class="wf-p" style="width:30%;"></div><div class="wf-p" style="width:20%;"></div><span class="wf-btn" style="font-size:5.5px;">Supprimer</span></div>
+        </div>
+      </div>
+      <p class="wf-caption">9. Administration — analyses</p>
+      <p class="wf-desc">Vue globale des analyses de tous les utilisateurs (recherche, filtre, suppression).</p>
+    </div>
+
+    <!-- 10. Admin - stats & paramètres -->
+    <div class="wf-block">
+      <div class="wf-frame">
+        <div class="wf-topbar"><span class="wf-logo"></span><span class="wf-navlinks"><span class="wf-navlink light"></span><span class="wf-navlink light"></span><span class="wf-navlink"></span></span><span class="wf-avatar"></span></div>
+        <div class="wf-body">
+          <div class="wf-row" style="margin-bottom:6px;">
+            <div class="wf-col wf-card"><div class="wf-h" style="width:60%;"></div></div>
+            <div class="wf-col wf-card"><div class="wf-h" style="width:60%;"></div></div>
+          </div>
+          <div class="wf-card"><div class="wf-x" style="height:20px;"></div></div>
+          <div class="wf-card" style="margin-top:6px;">
+            <div class="wf-slider"></div>
+            <div class="wf-slider"></div>
+            <div class="wf-slider"></div>
+          </div>
+        </div>
+      </div>
+      <p class="wf-caption">10. Administration — statistiques &amp; paramètres</p>
+      <p class="wf-desc">Vue d'ensemble de la plateforme, pondération des critères, seuils de risque.</p>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    Les versions interactives haute-fidélité de ces 10 écrans (couleur, survol, formulaires fonctionnels) ont été produites séparément au fil des échanges et restent disponibles en ligne à la demande.
+  </div>
+
+  <footer class="page-footer">CyberGuard Bénin — Dossier de conception — Semaine 1</footer>
+
+</div>
+</body>
+</html>

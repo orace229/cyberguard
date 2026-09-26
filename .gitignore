@@ -1,0 +1,34 @@
+# Dependances
+node_modules/
+vendor/
+backend/vendor/
+frontend/node_modules/
+
+# Fichiers d'environnement sensibles
+.env
+backend/.env
+frontend/.env
+!backend/.env.example
+!frontend/.env.example
+
+# Build & Fichiers temporaires
+frontend/dist/
+backend/storage/logs/*.log
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+!backend/storage/framework/cache/.gitignore
+!backend/storage/framework/sessions/.gitignore
+!backend/storage/framework/views/.gitignore
+
+# Base de données SQLite locale
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+
+# IDE & OS
+.idea/
+.vscode/
+*.suo
+*.user
+.DS_Store
+Thumbs.db

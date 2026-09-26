@@ -1,0 +1,127 @@
+\chapter{R\'esultats obtenus}
+\label{chap:resultats}
+
+Ce chapitre pr\'esente les r\'esultats techniques obtenus lors du d\'eveloppement de
+notre application~: l'architecture mise en place, les mesures de s\'ecurit\'e
+appliqu\'ees, ainsi que certaines interfaces illustrant le fonctionnement de la
+plateforme.
+
+\section{R\'esultats}
+
+\subsection{Pr\'esentation de quelques interfaces de l'application}
+
+% TODO : remplacer chaque \TODOFigure par une vraie capture d'\'ecran une fois
+% le frontend d\'evelopp\'e (page d'accueil, tableau de bord, nouvelle analyse,
+% r\'esultat d'analyse, historique, administration...).
+
+\subsubsection{Page d'accueil}
+\textit{[\`A compl\'eter]}
+\TODOFigure{page-accueil.png}{Page d'accueil}{fig:accueil}
+
+\subsubsection{Tableau de bord}
+\textit{[\`A compl\'eter]}
+\TODOFigure{tableau-de-bord.png}{Tableau de bord}{fig:dashboard}
+
+\subsubsection{R\'esultat d'une analyse}
+\textit{[\`A compl\'eter]}
+\TODOFigure{resultat-analyse.png}{R\'esultat d'une analyse}{fig:resultat}
+
+\subsection{Syst\`eme de gestion de base de donn\'ees}
+
+Pour ce projet, nous avons utilis\'e \textbf{MySQL} (MariaDB) comme syst\`eme de
+gestion de base de donn\'ees relationnelle, int\'egr\'e via XAMPP. La base de donn\'ees
+compte quatre tables principales~: \texttt{utilisateurs}, \texttt{analyses},
+\texttt{controles} et \texttt{parametres\_score}, refl\'etant directement le
+diagramme de classes pr\'esent\'e au chapitre pr\'ec\'edent. L'utilisation de XAMPP
+facilite le d\'eveloppement en local en fournissant un environnement complet
+incluant Apache, PHP et MySQL. Laravel interagit avec MySQL gr\^ace \`a
+\textbf{Eloquent}, son ORM int\'egr\'e, qui permet de manipuler les donn\'ees de
+mani\`ere simple, s\'ecuris\'ee et orient\'ee objet.
+
+\subsection{Protocole de s\'ecurit\'e}
+
+La s\'ecurit\'e a \'et\'e au c\oe ur de notre d\'emarche de d\'eveloppement, ce qui est
+particuli\`erement coh\'erent avec la nature m\^eme du projet.
+
+\paragraph{Authentification} L'authentification repose sur \textbf{Laravel
+Sanctum} en mode SPA (authentification par cookie de session), adapt\'ee \`a la
+s\'eparation frontend React / backend Laravel. Les mots de passe sont stock\'es
+hach\'es (\texttt{bcrypt} via \texttt{Hash::make}), jamais en clair.
+
+\paragraph{Autorisation} Chaque route sensible de l'API v\'erifie que
+l'utilisateur authentifi\'e est bien propri\'etaire de la ressource demand\'ee (par
+exemple, un utilisateur ne peut consulter le d\'etail d'une analyse que si elle
+lui appartient, sauf s'il est administrateur), avec un rejet explicite (code
+HTTP 403) sinon.
+
+\paragraph{Validation des entr\'ees} Toutes les donn\'ees entrantes (URL \`a
+analyser, formulaires d'inscription/connexion) sont valid\'ees c\^ot\'e serveur via
+le validateur int\'egr\'e de Laravel avant tout traitement.
+
+\subsection{Protection des donn\'ees et communication s\'ecuris\'ee}
+
+\begin{itemize}
+  \item Les injections SQL sont \'evit\'ees gr\^ace \`a l'ORM Eloquent, qui prot\`ege
+    automatiquement les requ\^etes contre ces attaques.
+  \item Le moteur d'analyse lui-m\^eme reste strictement \textbf{non intrusif}~: il
+    se limite \`a observer les r\'eponses HTTP publiques d'un site (en-t\^etes,
+    certificat) sans jamais tenter d'exploiter une faille.
+  \item % TODO : une fois d\'eploy\'ee, pr\'eciser ici que les \'echanges entre le
+        % frontend et l'API se font via HTTPS en production.
+        \textit{[\`A compl\'eter apr\`es d\'eploiement~: confirmation du HTTPS en production]}
+\end{itemize}
+
+\section{Discussion}
+
+\subsection{Par rapport aux objectifs fix\'es}
+
+Les objectifs sp\'ecifiques fix\'es en introduction sont, \`a ce stade,
+globalement atteints~: la plateforme authentifie ses utilisateurs (par mot de
+passe ou via Google), analyse un site sur les sept crit\`eres retenus, calcule
+un score et un niveau de risque, g\'en\`ere des recommandations, et conserve un
+historique consultable. La principale valeur ajout\'ee par rapport aux outils
+existants cit\'es en introduction (Mozilla Observatory, SSL Labs) tient moins
+aux contr\^oles eux-m\^emes -- volontairement plus restreints -- qu'\`a leur
+restitution~: un score unique plut\^ot que plusieurs rapports \'epars, et des
+descriptions r\'edig\'ees en fran\c{c}ais courant plut\^ot qu'en jargon technique
+anglophone. Ce dernier point n'\'etait pas acquis d\`es le d\'epart~: les
+premi\`eres versions du moteur produisaient des constats bruts (noms
+d'en-t\^etes HTTP, versions de protocole) qui se sont r\'ev\'el\'es tout aussi
+incompr\'ehensibles pour un non-technicien que ceux des outils existants. La
+reformulation compl\`ete des descriptions et recommandations a \'et\'e n\'ecessaire
+pour r\'epondre effectivement \`a l'objectif de p\'edagogie.
+
+\subsection{Limites}
+
+Plusieurs limites doivent \^etre soulign\'ees. D'abord, le score refl\`ete un
+\'etat \`a un instant T~: une analyse est une photographie, pas une surveillance
+continue -- un site conforme au moment de l'analyse peut se d\'egrader ensuite
+sans que l'utilisateur en soit inform\'e, hors nouvelle analyse manuelle.
+Ensuite, les sept contr\^oles retenus, bien que repr\'esentatifs, ne constituent
+pas un audit de s\'ecurit\'e exhaustif~: ils ne remplacent pas un test
+d'intrusion men\'e par un professionnel, et se limitent volontairement \`a des
+v\'erifications passives. La pond\'eration des crit\`eres dans le calcul du score,
+bien que configurable par un administrateur, reste \'egalement une d\'ecision en
+partie subjective~: deux baremes diff\'erents peuvent produire deux niveaux de
+risque diff\'erents pour un m\^eme site.
+
+Le traitement des analyses d\'ependant d'appels r\'eseau vers des serveurs
+externes r\'eels, le r\'esultat peut en outre varier d'une ex\'ecution \`a
+l'autre~: au cours des tests, une m\^eme URL a pu \^etre marqu\'ee \og~injoignable~\fg{}
+lors d'un essai puis analys\'ee avec succ\`es quelques minutes plus tard,
+simplement parce que le site cibl\'e a mis plus de huit secondes \`a r\'epondre la
+premi\`ere fois. Ce comportement n'est pas un dysfonctionnement de la
+plateforme, mais une contrainte inh\'erente \`a toute analyse d\'ependante du
+r\'eseau, qu'il convient de garder \`a l'esprit dans l'interpr\'etation d'un
+\'echec ponctuel.
+
+Enfin, le traitement asynchrone des analyses (section~\ref{chap:programmation})
+repose sur un worker de file d'attente qui doit tourner en continu~: en
+environnement de d\'eveloppement local, l'oubli de d\'emarrer ce processus a \`a
+plusieurs reprises laiss\'e des analyses bloqu\'ees ind\'efiniment au statut
+\og~en cours~\fg, sans message d'erreur explicite pour l'utilisateur. Ce point
+constitue une vigilance op\'erationnelle \`a documenter pour un futur
+d\'eploiement en production, au-del\`a du seul code applicatif.
+
+Ce chapitre a permis de pr\'esenter les principaux r\'esultats techniques du
+projet ainsi qu'une lecture critique de leur port\'ee et de leurs limites.

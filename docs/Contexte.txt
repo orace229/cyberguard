@@ -1,0 +1,68 @@
+**Contexte**
+
+Au Bénin, de plus en plus d'entreprises, écoles, administrations et PME se dotent d'un site web pour exister en ligne — vitrine, services, communication. Mais la sécurité informatique reste un domaine technique réservé à des spécialistes, et la majorité de ces structures n'ont ni les compétences ni les moyens de vérifier si leur site respecte les standards de sécurité de base.
+
+**Problème**
+
+Un site web mal sécurisé expose son propriétaire (et ses visiteurs) à des risques concrets : usurpation via un site sans HTTPS, interception de données sur une connexion non chiffrée, attaques facilitées par l'absence d'en-têtes de sécurité, ou fuite d'informations sur le serveur utilisé. Le problème n'est pas seulement technique — c'est un problème d'accès à l'information : le propriétaire d'un site ne sait généralement pas si son site est vulnérable, ni quoi vérifier, ni comment corriger. Les outils existants (Mozilla Observatory, SSL Labs) sont souvent en anglais, dispersés, et pas pensés pour un utilisateur non-technicien qui veut juste comprendre "est-ce que mon site est sûr, et que dois-je faire ?".
+
+**Solution**
+
+CyberGuard Bénin est une plateforme qui automatise ce diagnostic. L'utilisateur crée un compte, saisit l'URL de son site, et la plateforme lance une série de vérifications non intrusives (HTTPS, certificat SSL, en-têtes de sécurité, exposition d'informations serveur, cookies, etc.). Le système traduit ces résultats techniques en un score sur 100 et un niveau de risque (Bon / Moyen / Faible), accompagné de recommandations concrètes et compréhensibles. Un rapport PDF est généré, et l'utilisateur peut suivre l'évolution de la sécurité de son site dans le temps via un tableau de bord et un historique.
+
+**Enjeux**
+
+Il y a un enjeu de démocratisation : rendre la cybersécurité accessible à des acteurs qui n'ont ni budget ni expertise pour un audit professionnel. Un enjeu de confiance numérique : plus de sites correctement sécurisés au Bénin, c'est moins de surface d'attaque pour les utilisateurs finaux (vols de données, phishing, sites compromis). Un enjeu technique pour vous en tant qu'équipe projet : construire un outil qui reste crédible (les vérifications doivent être justes et bien pondérées, sinon le score n'a aucune valeur) tout en restant non intrusif — c'est-à-dire ne jamais tenter d'exploiter une faille, seulement la détecter passivement, ce qui est aussi un enjeu légal (analyser un site sans consentement explicite au-delà de checks passifs pourrait poser problème). Enfin, un enjeu de pédagogie : le rapport doit être compréhensible par quelqu'un qui ne connaît rien à la sécurité, donc traduire du technique en langage clair est presque aussi important que la détection elle-même.
+
+
+
+
+
+
+
+
+
+
+
+
+# Identification des acteurs et des cas d'utilisation
+
+## Acteurs
+
+| Acteur | Description |
+|---|---|
+| **Utilisateur** | Personne disposant d'un compte sur la plateforme, propriétaire ou responsable d'un site web qu'elle souhaite analyser. |
+| **Administrateur** | Personne chargée de la gestion de la plateforme (comptes, statistiques, paramètres de scoring). |
+| **Système** | Acteur non-humain : partie automatisée de l'application qui exécute les vérifications techniques et produit les résultats. |
+
+## Cas d'utilisation
+
+### Acteur : Utilisateur
+
+- **Gérer son compte** — s'inscrire, modifier ses informations, réinitialiser son mot de passe.
+- **S'authentifier** — se connecter, se déconnecter.
+- **Lancer une analyse** — saisir l'URL d'un site et déclencher une analyse de sécurité.
+- **Consulter les rapports** — consulter l'historique et le détail des analyses, télécharger un rapport au format PDF.
+- **Consulter le tableau de bord** — visualiser ses statistiques personnelles (nombre d'analyses, score moyen, évolution).
+
+### Acteur : Administrateur
+
+- **Gérer les comptes utilisateurs** — lister, désactiver, supprimer des comptes.
+- **Administrer la plateforme** — consulter les statistiques globales, configurer les paramètres de scoring (pondération des critères, seuils de risque).
+
+### Acteur : Système
+
+- **Traiter l'analyse** — exécuter les vérifications techniques (HTTPS, certificat SSL, en-têtes de sécurité, vulnérabilités simples), calculer le score et le niveau de risque, générer le rapport PDF, enregistrer le résultat en base de données. Déclenché automatiquement par "Lancer une analyse".
+
+## Récapitulatif
+
+| # | Cas d'utilisation | Acteur |
+|---|---|---|
+| 1 | Gérer son compte | Utilisateur |
+| 2 | S'authentifier | Utilisateur |
+| 3 | Lancer une analyse | Utilisateur |
+| 4 | Consulter les rapports | Utilisateur |
+| 5 | Consulter le tableau de bord | Utilisateur |
+| 6 | Gérer les comptes utilisateurs | Administrateur |
+| 7 | Administrer la plateforme | Administrateur |
+| 8 | Traiter l'analyse | Système |

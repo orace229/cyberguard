@@ -1,0 +1,181 @@
+\documentclass[12pt,a4paper]{report}
+
+% ===================== ENCODAGE ET LANGUE =====================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,french]{babel} % francais = langue principale (dernier charge)
+
+% ===================== MISE EN PAGE =====================
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.15}
+
+% ===================== POLICE (Arial) =====================
+% Helvetica (helvet) est metriquement equivalente a Arial ; scaled=1 pour
+% garder la taille nominale (pas de reduction automatique de l'x-height).
+\usepackage[scaled=1]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% ===================== TAILLE DES TITRES =====================
+% Template : 14pt pour les titres (chapitres, sections), 12pt pour les
+% sous-titres (sous-sections et niveaux inferieurs).
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\bfseries\fontsize{14}{16.8}\selectfont}{\thechapter.}{10pt}{}
+\titleformat{\section}{\normalfont\bfseries\fontsize{14}{16.8}\selectfont}{\thesection}{8pt}{}
+\titleformat{\subsection}{\normalfont\bfseries\fontsize{12}{14.4}\selectfont}{\thesubsection}{6pt}{}
+\titleformat{\subsubsection}{\normalfont\bfseries\fontsize{12}{14.4}\selectfont}{\thesubsubsection}{6pt}{}
+% \paragraph et \subparagraph sont utilises dans ce rapport comme des
+% intitules autonomes (suivis d'un saut de ligne, parfois d'un tableau ou
+% d'une figure) plutot que du texte encha\^in\'e : on les garde donc en
+% [hang], comme les autres niveaux, plut\^ot qu'en [runin].
+\titleformat{\paragraph}[hang]{\normalfont\bfseries\fontsize{12}{14.4}\selectfont}{\theparagraph}{6pt}{}
+\titleformat{\subparagraph}[hang]{\normalfont\bfseries\itshape\fontsize{12}{14.4}\selectfont}{\thesubparagraph}{6pt}{}
+
+% ===================== GRAPHIQUES ET COULEURS =====================
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{xcolor}
+% Identit\'e visuelle "Le Sceau" (m\^eme palette que la plateforme CyberGuard
+% B\'enin) : papier chaud, bleu marine, accent or.
+\definecolor{brandnavy}{HTML}{16304A}
+\definecolor{brandgold}{HTML}{B8863A}
+\definecolor{brandpaper}{HTML}{FFFDF7}
+\definecolor{brandborder}{HTML}{DCD3B8}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning,calc}
+
+% ===================== TABLEAUX =====================
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+
+% ===================== LISTES =====================
+\usepackage{enumitem}
+
+% ===================== CODE SOURCE =====================
+\usepackage{listings}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{purple!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  tabsize=2,
+  backgroundcolor=\color{black!3}
+}
+\lstset{style=code}
+
+% ===================== EN-TETES / PIEDS DE PAGE =====================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ===================== FIGURES ET FLOTTANTS =====================
+\usepackage{float}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+% ===================== LIENS =====================
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue,
+  pdftitle={CyberGuard Benin - Rapport de stage},
+  pdfauthor={Orace ATTINMAWASSONOU, Fructueux HOUNGBEME}
+}
+
+% ===================== INFORMATIONS DU RAPPORT =====================
+% Point unique de modification : change ici, ca se repercute partout.
+\newcommand{\etudiantA}{Orace ATTINMAWASSONOU}
+\newcommand{\etudiantB}{Fructueux HOUNGBEME}
+\newcommand{\ecole}{Ecole Nationale d'Economie Appliquee et du Management (ENEAM)}
+\newcommand{\universite}{Universite d'Abomey Calavi (UAC)}
+\newcommand{\filiere}{Informatique de gestion}
+\newcommand{\anneeacademique}{2025-2026}
+\newcommand{\theme}{CyberGuard B\'enin \\ Plateforme intelligente d'analyse et d'\'evaluation de la s\'ecurit\'e des sites web}
+\newcommand{\entreprise}{Direction G\'en\'erale de la Recherche Scientifique et de l'Innovation (DGRSI)}
+\newcommand{\maitredestage}{KOUTON Joslyn}
+\newcommand{\datedebut}{06 juillet 2026}
+\newcommand{\datefin}{31 juillet 2026}
+
+% ===================== FIGURE PLACEHOLDER =====================
+% Insere la vraie image si le fichier existe deja dans images/, sinon
+% affiche un encadre "a inserer" -- permet d'ajouter les images au fur et
+% a mesure sans jamais retoucher les chapitres, et le document continue de
+% compiler proprement sur Overleaf tant que certaines manquent encore.
+\newcommand{\TODOFigure}[3]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{images/#1}{%
+      \includegraphics[width=0.85\textwidth]{#1}%
+    }{%
+      \fbox{%
+        \begin{minipage}{0.85\textwidth}
+          \centering
+          \vspace{1.5cm}
+          \textit{[Image \`a ins\'erer ici : #1]}
+          \vspace{1.5cm}
+        \end{minipage}%
+      }%
+    }
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
+
+\begin{document}
+
+% ===================== PAGE DE GARDE =====================
+\input{front/page_garde}
+
+% ===================== SOMMAIRE (bref) =====================
+\input{front/sommaire}
+
+% ===================== DEDICACES =====================
+\input{front/dedicaces}
+
+% ===================== REMERCIEMENTS =====================
+\input{front/remerciements}
+
+% ===================== LISTE DES FIGURES / TABLEAUX =====================
+\listoffigures
+\listoftables
+
+% ===================== SIGLES ET ABREVIATIONS =====================
+\input{front/sigles}
+
+% ===================== RESUME / ABSTRACT =====================
+\input{front/resume}
+\input{front/abstract}
+
+% ===================== INTRODUCTION =====================
+\input{chapters/introduction}
+
+% ===================== CHAPITRES =====================
+\input{chapters/chapitre1}
+\input{chapters/chapitre2}
+\input{chapters/chapitre3}
+
+% ===================== CONCLUSION =====================
+\input{back/conclusion}
+
+% ===================== REFERENCES =====================
+\input{back/references}
+
+% ===================== ANNEXES =====================
+\input{back/annexes}
+
+% ===================== TABLE DES MATIERES DETAILLEE =====================
+\tableofcontents
+
+\end{document}

@@ -1,0 +1,49 @@
+\chapter*{Conclusion et perspectives}
+\addcontentsline{toc}{chapter}{Conclusion et perspectives}
+\markboth{Conclusion et perspectives}{}
+
+\section{Conclusion}
+
+Le d\'eveloppement de la plateforme CyberGuard B\'enin a \'et\'e l'occasion de mettre
+en pratique l'ensemble du cycle de vie d'un projet informatique~: clarification
+du besoin, mod\'elisation UML, conception de la base de donn\'ees, puis
+impl\'ementation technique. Bas\'ee sur une architecture combinant une API Laravel
+et une interface React, la plateforme automatise un diagnostic de s\'ecurit\'e
+jusque-l\`a r\'eserv\'e \`a des outils techniques et anglophones, en le rendant
+accessible \`a un public non-technicien gr\^ace \`a un score, un niveau de risque et
+des recommandations en fran\c{c}ais.
+
+Au terme du stage, la plateforme livr\'ee couvre l'ensemble des cas d'utilisation
+identifi\'es en phase de conception~: authentification (par mot de passe et via
+Google), lancement et traitement asynchrone des analyses (sept contr\^oles non
+intrusifs), consultation des rapports avec t\'el\'echargement PDF, tableau de
+bord, notifications in-app de fin d'analyse, ainsi qu'un back-office
+d'administration complet (gestion des comptes, mod\'eration des analyses,
+param\'etrage du bar\`eme de scoring). Le principal point rest\'e en dehors du
+p\'erim\`etre du stage est le d\'eploiement en production, la plateforme n'ayant
+\'et\'e ex\'ecut\'ee qu'en environnement de d\'eveloppement local.
+
+\section{Perspectives}
+
+Parmi les perspectives d'\'evolution envisag\'ees~:
+\begin{itemize}
+  \item le d\'eploiement en production et l'ouverture de la plateforme au
+    public, avec confirmation du HTTPS de bout en bout~;
+  \item la v\'erification de l'adresse email \`a l'inscription (compte cr\'e\'e par
+    formulaire classique)~;
+  \item le suivi automatique p\'eriodique~: relancer r\'eguli\`erement l'analyse
+    d'un site d\'ej\`a enregistr\'e et alerter par email en cas de r\'egression du
+    score, plut\^ot que de d\'ependre uniquement d'une analyse manuelle~;
+  \item un rapport public partageable (lien en lecture seule) et un badge de
+    score int\'egrable sur le site audit\'e~;
+  \item l'ajout de v\'erifications suppl\'ementaires (CSP plus fine, en-t\^etes
+    additionnels, historique des CVE connues li\'ees aux technologies
+    d\'etect\'ees)~;
+  \item une couverture de tests automatis\'es \'etendue au frontend, en
+    compl\'ement de la suite PHPUnit existante c\^ot\'e backend.
+\end{itemize}
+
+En d\'efinitive, CyberGuard B\'enin se veut une contribution concr\`ete \`a la
+d\'emocratisation de la cybers\'ecurit\'e au B\'enin, en r\'eduisant la surface
+d'attaque des sites web mal s\'ecuris\'es et en rendant la premi\`ere \'etape d'un
+audit de s\'ecurit\'e accessible \`a tous.

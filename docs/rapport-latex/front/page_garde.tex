@@ -1,0 +1,112 @@
+\begin{titlepage}
+\centering
+
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[brandborder, line width=0.8pt]
+    ($(current page.north west) + (1.2cm,-1.2cm)$) rectangle
+    ($(current page.south east) + (-1.2cm,1.2cm)$);
+  % Petits losanges dores aux quatre coins du cadre, pour un rendu plus
+  % soigne qu'un simple rectangle.
+  \draw[brandgold, line width=0.8pt, rotate around={45:($(current page.north west)+(1.2cm,-1.2cm)$)}]
+    ($(current page.north west) + (1.2cm,-1.2cm)$) +(-0.13,-0.13) rectangle +(0.13,0.13);
+  \draw[brandgold, line width=0.8pt, rotate around={45:($(current page.north east)+(-1.2cm,-1.2cm)$)}]
+    ($(current page.north east) + (-1.2cm,-1.2cm)$) +(-0.13,-0.13) rectangle +(0.13,0.13);
+  \draw[brandgold, line width=0.8pt, rotate around={45:($(current page.south west)+(1.2cm,1.2cm)$)}]
+    ($(current page.south west) + (1.2cm,1.2cm)$) +(-0.13,-0.13) rectangle +(0.13,0.13);
+  \draw[brandgold, line width=0.8pt, rotate around={45:($(current page.south east)+(-1.2cm,1.2cm)$)}]
+    ($(current page.south east) + (-1.2cm,1.2cm)$) +(-0.13,-0.13) rectangle +(0.13,0.13);
+\end{tikzpicture}
+
+\vspace*{1.2cm}
+
+% ===== LOGOS UAC / ENEAM =====
+% Depose logo-uac.jpg et logo-eneam.jpg dans images/ : ils s'affichent
+% automatiquement a la bonne taille. En attendant, un encadre discret
+% indique leur emplacement prevu, sans casser la compilation.
+\noindent
+\begin{minipage}{0.92\textwidth}
+  \centering
+  \begin{minipage}[c][2.4cm][c]{4cm}
+    \centering
+    \IfFileExists{images/logo-uac.jpg}{%
+      \includegraphics[height=2.2cm]{logo-uac.jpg}%
+    }{%
+      \fbox{\begin{minipage}[c][1.8cm][c]{3.2cm}\centering\footnotesize\itshape\color{brandnavy!70} [Logo UAC]\end{minipage}}%
+    }
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c][2.4cm][c]{4cm}
+    \centering
+    \IfFileExists{images/logo-eneam.jpg}{%
+      \includegraphics[height=2.2cm]{logo-eneam.jpg}%
+    }{%
+      \fbox{\begin{minipage}[c][1.8cm][c]{3.2cm}\centering\footnotesize\itshape\color{brandnavy!70} [Logo ENEAM]\end{minipage}}%
+    }
+  \end{minipage}
+\end{minipage}
+
+\vspace{1cm}
+
+% ===== SCEAU DECORATIF =====
+% Petit emblème rond (double liseré or, silhouette de bouclier) en clin
+% d'oeil au nom de la charte graphique "Le Sceau" et au theme cybersecurite
+% du rapport -- purement ornemental.
+\begin{tikzpicture}
+  \draw[brandgold, line width=0.7pt] (0,0) circle (0.85cm);
+  \draw[brandgold, line width=0.4pt] (0,0) circle (0.72cm);
+  \fill[brandnavy] (-0.32,0.4) -- (0.32,0.4) -- (0.32,0.02) -- (0,-0.42) -- (-0.32,0.02) -- cycle;
+  \fill[brandgold] (0,0.16) circle (0.07cm);
+  \fill[brandgold] (-0.06,0.02) -- (0.06,0.02) -- (0.045,-0.14) -- (-0.045,-0.14) -- cycle;
+\end{tikzpicture}
+
+\vspace{0.6cm}
+
+{\color{brandnavy}\footnotesize\bfseries R\'EPUBLIQUE DU B\'ENIN}\\[0.35cm]
+{\color{brandgold}\rule{2.6cm}{0.6pt}}\\[0.7cm]
+
+{\color{brandnavy}\bfseries MINIST\`ERE DE L'ENSEIGNEMENT SUP\'ERIEUR ET DE LA\\
+RECHERCHE SCIENTIFIQUE}\\[1cm]
+
+{\color{brandnavy}\rmfamily\Large\bfseries \universite}\\[0.35cm]
+{\color{brandnavy}\rmfamily\bfseries \ecole}\\[0.4cm]
+{\color{brandnavy}\underline{\textbf{Fili\`ere}} : \filiere}\\[1.6cm]
+
+{\color{brandnavy}\footnotesize\bfseries THEME}\\[0.5cm]
+
+\begin{tikzpicture}
+  % Rectangle decale en fond (brandborder) pour simuler une legere ombre
+  % portee, sans dependre de la librairie tikz "shadows".
+  \node[fill=brandborder, sharp corners, inner sep=14pt, text width=0.75\textwidth, xshift=0.12cm, yshift=-0.12cm] {
+    \rmfamily\Large\bfseries\color{brandborder} \theme
+  };
+  \node[draw=brandnavy, line width=0.8pt, sharp corners, fill=brandpaper, inner sep=14pt, text width=0.75\textwidth, align=center] {
+    \rmfamily\Large\bfseries\color{brandnavy} \theme
+  };
+\end{tikzpicture}
+
+\vspace{1.8cm}
+
+{\color{brandgold}\rule{4cm}{0.6pt}}
+
+\vspace{1.8cm}
+
+\begin{minipage}{0.5\textwidth}
+  \centering
+  {\color{brandnavy}\itshape R\'ealis\'e par~:}\\[0.35cm]
+  {\color{brandnavy}\rmfamily\bfseries \etudiantA}\\
+  {\color{brandnavy}\rmfamily\bfseries \etudiantB}
+\end{minipage}
+
+\vspace{1.6cm}
+
+{\color{brandnavy}\itshape Ma\^itre de stage~:}\\[0.25cm]
+{\color{brandnavy}\rmfamily\bfseries \maitredestage}
+
+\vfill
+
+{\color{brandgold}\rule{2.6cm}{0.6pt}}\\[0.4cm]
+{\color{brandnavy}\bfseries Ann\'ee acad\'emique~: \anneeacademique}
+
+\vspace{1.2cm}
+
+\end{titlepage}
