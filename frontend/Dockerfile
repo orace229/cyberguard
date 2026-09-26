@@ -3,11 +3,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-# VITE_API_URL est gravé dans le bundle statique au moment du build (Vite ne
-# lit pas les variables d'environnement au runtime) — le fournir en
-# --build-arg si l'API n'est pas sur localhost.
-ARG VITE_API_URL=http://localhost:8000/api
-ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 FROM nginx:1.27-alpine
@@ -23,3 +18,5 @@ RUN printf 'server {\n\
 }\n' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
+
+CMD ["sh", "-c", "echo \"window.__ENV__ = { VITE_API_URL: '${VITE_API_URL}' };\" > /usr/share/nginx/html/env-config.js && exec nginx -g 'daemon off;'"]

@@ -1,6 +1,17 @@
 import axios from 'axios';
 
 function ObtenirUrlApi() {
+  if (typeof window !== 'undefined' && window.__ENV__?.VITE_API_URL) {
+    let envUrl = window.__ENV__.VITE_API_URL.trim();
+    if (envUrl && !envUrl.endsWith('/api')) {
+      envUrl = envUrl.replace(/\/+$/, '') + '/api';
+    }
+    if (!envUrl.startsWith('http://') && !envUrl.startsWith('https://')) {
+      envUrl = `https://${envUrl}`;
+    }
+    return envUrl;
+  }
+
   let url = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
   
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
