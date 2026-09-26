@@ -30,7 +30,7 @@ return [
         'http://localhost:5175',
     ]),
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['#^https?://.*\.onrender\.com$#'],
 
     'allowed_headers' => ['*'],
 

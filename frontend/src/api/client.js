@@ -1,6 +1,18 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL;
+function ObtenirUrlApi() {
+  let url = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+  
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    if (!url || url.includes('localhost') || url.includes('127.0.0.1')) {
+      const backendHost = window.location.hostname.replace('cyberguard-frontend', 'cyberguard-backend');
+      url = `${window.location.protocol}//${backendHost}/api`;
+    }
+  }
+  return url;
+}
+
+const API_URL = ObtenirUrlApi();
 const APP_URL = API_URL.replace(/\/api\/?$/, '');
 
 const apiClient = axios.create({
