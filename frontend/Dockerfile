@@ -11,7 +11,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Configuration Nginx avec Reverse Proxy unifié :
 # 1. SPA Routing (React Router) sur /index.html
-# 2. Transfère automatiquement /api/ et /sanctum/ au service backend Docker/Render
+# 2. Transfère automatiquement /api et /sanctum au service backend Docker/Render
 RUN printf 'server {\n\
     listen 80;\n\
     root /usr/share/nginx/html;\n\
@@ -20,16 +20,16 @@ RUN printf 'server {\n\
         try_files $uri $uri/ /index.html;\n\
     }\n\
     \n\
-    location /api/ {\n\
-        proxy_pass http://cyberguard-backend:8000/api/;\n\
+    location /api {\n\
+        proxy_pass http://cyberguard-backend:8000;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
         proxy_set_header X-Forwarded-Proto $scheme;\n\
     }\n\
     \n\
-    location /sanctum/ {\n\
-        proxy_pass http://cyberguard-backend:8000/sanctum/;\n\
+    location /sanctum {\n\
+        proxy_pass http://cyberguard-backend:8000;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
