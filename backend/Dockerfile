@@ -25,6 +25,8 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} storage/logs boots
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+ENV PHP_CLI_SERVER_WORKERS=4
+
 EXPOSE 8000
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
