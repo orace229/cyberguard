@@ -23,74 +23,89 @@ class AnalyseSecuriteService
 {
     public function executer(Analyse $analyse): void
     {
-        $hote = parse_url($analyse->url, PHP_URL_HOST) ?: preg_replace('#^https?://#i', '', $analyse->url);
+        try {
+            $hote = parse_url($analyse->url, PHP_URL_HOST) ?: preg_replace('#^https?://#i', '', $analyse->url);
 
-        // Deuxième vérification (défense en profondeur) : le contrôleur a déjà
-        // rejeté les adresses privées/internes à la soumission, mais on
-        // revérifie ici au cas où la résolution DNS aurait changé entre-temps.
-        if (! $this->hoteEstAutorise($hote)) {
+            // Deuxième vérification (défense en profondeur) : le contrôleur a déjà
+            // rejeté les adresses privées/internes à la soumission, mais on
+            // revérifie ici au cas où la résolution DNS aurait changé entre-temps.
+            if (! $this->hoteEstAutorise($hote)) {
+                $analyse->update([
+                    'statut' => 'echec',
+                    'motif_echec' => "Adresse non autorisée : elle pointe vers une ressource réseau privée, interne ou introuvable.",
+                ]);
+
+                return;
+            }
+
+            $capture = $this->recupererReponse($analyse->url);
+
+            if ($capture === null) {
+                $analyse->update([
+                    'statut' => 'echec',
+                    'motif_echec' => 'Le site est injoignable (aucune réponse en HTTPS ni en HTTP dans le délai imparti).',
+                ]);
+
+                return;
+            }
+
+            ['reponse' => $reponse, 'https' => $https, 'urlBase' => $urlBase] = $capture;
+
+            // Une connexion réussie ne veut pas dire qu'il y a un vrai site à
+            // cette adresse : un domaine sans déploiement (ex. Netlify, Vercel)
+            // répond quand même, mais avec une page d'erreur générique de
+            // l'hébergeur. Sans ce contrôle, les 7 vérifications s'exécuteraient
+            // sur cette page d'erreur et produiraient un score trompeur.
+            if ($reponse->status() >= 400) {
+                $analyse->update([
+                    'statut' => 'echec',
+                    'motif_echec' => "Le site retourne une erreur HTTP {$reponse->status()} : aucun contenu n'est accessible à cette adresse.",
+                ]);
+
+                return;
+            }
+
+            $infosRedirection = $this->verifierRedirectionHttp($hote, $https);
+
+            $resultats = [
+                $this->verifierHttps($https, $reponse, $infosRedirection),
+                $this->controlerCertificatSsl($hote),
+                $this->analyserEnTetesSecurite($reponse),
+                $this->verifierCookies($reponse),
+                $this->rechercherVulnerabilites($reponse, $urlBase),
+                $this->verifierFichiersExposes($urlBase),
+                $this->verifierSecuriteEmail($hote),
+            ];
+
+            $bareme = ParametreScore::actuels();
+            $poidsParType = $this->poidsParType($bareme);
+
+            foreach ($resultats as $resultat) {
+                $resultat['poids'] = $poidsParType[$resultat['type']] ?? 0;
+                $analyse->resultatsVerification()->create($resultat);
+            }
+
+            [$score, $niveauRisque] = $this->calculerScore($resultats, $bareme);
+
+            $analyse->score = $score;
+            $analyse->niveau_risque = $niveauRisque;
+            $analyse->statut = 'terminee';
+
+            try {
+                $analyse->chemin_rapport_pdf = $this->genererRapportPdf($analyse);
+            } catch (\Throwable $e) {
+                logger()->error("Erreur lors de la génération du PDF pour l'analyse #{$analyse->id}: ".$e->getMessage());
+                $analyse->chemin_rapport_pdf = null;
+            }
+
+            $analyse->save();
+        } catch (\Throwable $e) {
+            logger()->error("Échec inattendu de l'analyse #{$analyse->id}: ".$e->getMessage());
             $analyse->update([
                 'statut' => 'echec',
-                'motif_echec' => "Adresse non autorisée : elle pointe vers une ressource réseau privée, interne ou introuvable.",
+                'motif_echec' => "Une erreur inattendue est survenue pendant l'analyse : ".$e->getMessage(),
             ]);
-
-            return;
         }
-
-        $capture = $this->recupererReponse($analyse->url);
-
-        if ($capture === null) {
-            $analyse->update([
-                'statut' => 'echec',
-                'motif_echec' => 'Le site est injoignable (aucune réponse en HTTPS ni en HTTP dans le délai imparti).',
-            ]);
-
-            return;
-        }
-
-        ['reponse' => $reponse, 'https' => $https, 'urlBase' => $urlBase] = $capture;
-
-        // Une connexion réussie ne veut pas dire qu'il y a un vrai site à
-        // cette adresse : un domaine sans déploiement (ex. Netlify, Vercel)
-        // répond quand même, mais avec une page d'erreur générique de
-        // l'hébergeur. Sans ce contrôle, les 7 vérifications s'exécuteraient
-        // sur cette page d'erreur et produiraient un score trompeur.
-        if ($reponse->status() >= 400) {
-            $analyse->update([
-                'statut' => 'echec',
-                'motif_echec' => "Le site retourne une erreur HTTP {$reponse->status()} : aucun contenu n'est accessible à cette adresse.",
-            ]);
-
-            return;
-        }
-
-        $infosRedirection = $this->verifierRedirectionHttp($hote, $https);
-
-        $resultats = [
-            $this->verifierHttps($https, $reponse, $infosRedirection),
-            $this->controlerCertificatSsl($hote),
-            $this->analyserEnTetesSecurite($reponse),
-            $this->verifierCookies($reponse),
-            $this->rechercherVulnerabilites($reponse, $urlBase),
-            $this->verifierFichiersExposes($urlBase),
-            $this->verifierSecuriteEmail($hote),
-        ];
-
-        $bareme = ParametreScore::actuels();
-        $poidsParType = $this->poidsParType($bareme);
-
-        foreach ($resultats as $resultat) {
-            $resultat['poids'] = $poidsParType[$resultat['type']] ?? 0;
-            $analyse->resultatsVerification()->create($resultat);
-        }
-
-        [$score, $niveauRisque] = $this->calculerScore($resultats, $bareme);
-
-        $analyse->score = $score;
-        $analyse->niveau_risque = $niveauRisque;
-        $analyse->statut = 'terminee';
-        $analyse->chemin_rapport_pdf = $this->genererRapportPdf($analyse);
-        $analyse->save();
     }
 
     /**
