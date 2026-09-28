@@ -45,6 +45,6 @@ services:
       - key: DB_CONNECTION
         value: sqlite
       - key: QUEUE_CONNECTION
-        value: database
+        value: sync
       - key: RUN_MIGRATIONS
         value: "true"

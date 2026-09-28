@@ -18,6 +18,6 @@ if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
 fi
 
 # Lance le worker de file d'attente en tâche de fond (compatible Render Free Tier)
-php artisan queue:work --tries=1 --daemon &
+php artisan queue:work --tries=1 &
 
 exec "$@"
