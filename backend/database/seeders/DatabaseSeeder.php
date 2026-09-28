@@ -6,6 +6,7 @@ use App\Models\ParametreScore;
 use App\Models\Utilisateur;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,14 +19,26 @@ class DatabaseSeeder extends Seeder
     {
         ParametreScore::actuels();
 
-        Utilisateur::factory()->administrateur()->create([
-            'nom' => 'Administrateur CyberGuard',
-            'email' => 'admin@cyberguard.bj',
-        ]);
+        Utilisateur::firstOrCreate(
+            ['email' => 'admin@cyberguard.bj'],
+            [
+                'nom' => 'Administrateur CyberGuard',
+                'mot_de_passe' => Hash::make('Password123!'),
+                'role' => 'admin',
+                'statut' => 'actif',
+                'email_verifie_a' => now(),
+            ]
+        );
 
-        Utilisateur::factory()->create([
-            'nom' => 'Utilisateur Test',
-            'email' => 'test@cyberguard.bj',
-        ]);
+        Utilisateur::firstOrCreate(
+            ['email' => 'test@cyberguard.bj'],
+            [
+                'nom' => 'Utilisateur Test',
+                'mot_de_passe' => Hash::make('Password123!'),
+                'role' => 'utilisateur',
+                'statut' => 'actif',
+                'email_verifie_a' => now(),
+            ]
+        );
     }
 }
