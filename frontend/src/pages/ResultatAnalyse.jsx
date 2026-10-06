@@ -4,6 +4,7 @@ import apiClient from '../api/client';
 import ScoreCercle from '../components/ScoreCercle';
 import BadgeRisque from '../components/BadgeRisque';
 import Spinner from '../components/Spinner';
+import ModalAbonnement from '../components/ModalAbonnement';
 import { useNotifications } from '../context/NotificationsContext';
 
 const LIBELLES_TYPE = {
@@ -95,6 +96,8 @@ export default function ResultatAnalyse() {
   // requête cross-origin (frontend et API sur des ports différents) : on
   // récupère le PDF nous-mêmes puis on déclenche le téléchargement, sans
   // aucune navigation ni nouvel onglet.
+  const [modalAbonnementOuverte, setModalAbonnementOuverte] = useState(false);
+
   async function telechargerRapport() {
     setTelechargementEnCours(true);
     setErreurTelechargement(null);
@@ -108,8 +111,13 @@ export default function ResultatAnalyse() {
       lien.click();
       lien.remove();
       window.URL.revokeObjectURL(url);
-    } catch {
-      setErreurTelechargement('Impossible de télécharger le rapport pour le moment.');
+    } catch (err) {
+      if (err.response?.status === 403) {
+        setErreurTelechargement('Le téléchargement du rapport PDF officiel certifié nécessite un Pass PRO (100 FCFA).');
+        setModalAbonnementOuverte(true);
+      } else {
+        setErreurTelechargement('Impossible de télécharger le rapport pour le moment.');
+      }
     } finally {
       setTelechargementEnCours(false);
     }
@@ -345,6 +353,13 @@ export default function ResultatAnalyse() {
           </li>
         ))}
       </ul>
+
+      <ModalAbonnement
+        ouvert={modalAbonnementOuverte}
+        surFermeture={() => setModalAbonnementOuverte(false)}
+        titre="Débloquer le rapport PDF Certifié (100 FCFA)"
+        message="Le téléchargement du rapport PDF complet certifié est réservé aux membres PRO. Payer 100 FCFA par Mobile Money (Moov, Celtis, MTN) pour débloquer immédiatement."
+      />
     </section>
   );
 }
