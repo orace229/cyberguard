@@ -46,4 +46,15 @@ class VerificationEmailController extends Controller
 
         return response()->json(['message' => 'Email de vérification renvoyé.']);
     }
+
+    public function verifierInstantane(Request $request)
+    {
+        $utilisateur = $request->user();
+
+        if (! $utilisateur->hasVerifiedEmail()) {
+            $utilisateur->markEmailAsVerified();
+        }
+
+        return response()->json($utilisateur->fresh());
+    }
 }

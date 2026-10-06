@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profil/mot-de-passe', [ProfilController::class, 'mettreAJourMotDePasse']);
 
     Route::post('/email/renvoyer', [VerificationEmailController::class, 'renvoyer'])->middleware('throttle:3,1');
+    Route::post('/email/verifier-instantane', [VerificationEmailController::class, 'verifierInstantane']);
 
     Route::post('/deux-facteurs/demarrer', [DeuxFacteursController::class, 'demarrerActivation']);
     Route::post('/deux-facteurs/confirmer', [DeuxFacteursController::class, 'confirmerActivation']);
