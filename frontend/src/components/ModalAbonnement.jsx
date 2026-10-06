@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import apiClient from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre, message }) {
   let authContext = null;
@@ -11,6 +12,7 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
     // Rendu hors AuthProvider (tests unitaires)
   }
   const setUtilisateur = authContext?.setUtilisateur || (() => {});
+  const { formatPrix, t } = useLanguage();
   const [chargement, setChargement] = useState(false);
   const [etapePaiement, setEtapePaiement] = useState('choix'); // 'choix' | 'numero' | 'confirmation'
   const [methodeSelectionnee, setMethodeSelectionnee] = useState('moov');
@@ -145,53 +147,50 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
                 </div>
               </div>
 
-              {/* Formules de prix ultra-accessibles */}
+              {/* Formules de prix ultra-accessibles avec conversion de devises */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Pass 1 Analyse */}
-                <div className="p-5 rounded-2xl border-2 border-blue-600 bg-blue-50/30 flex flex-col justify-between shadow-sm relative">
+                <div className="p-5 rounded-2xl border-2 border-blue-600 bg-slate-900/60 flex flex-col justify-between shadow-sm relative">
                   <span className="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                    Accès Immédiat
+                    {t('modalPaiement.passUnique')}
                   </span>
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-base">Pass 1 Analyse</h3>
+                    <h3 className="font-extrabold text-white text-base">{t('modalPaiement.passUnique')}</h3>
                     <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-blue-900">100 FCFA</span>
+                      <span className="text-3xl font-black text-cyan-400">{formatPrix(100)}</span>
                     </div>
-                    <ul className="mt-3 space-y-1.5 text-xs text-slate-600">
-                      <li>✓ Déblocage de l'analyse immédiate</li>
+                    <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+                      <li>✓ {t('modalPaiement.passUniqueDesc')}</li>
                       <li>✓ Téléchargement du PDF Certifié</li>
-                      <li>✓ Résolution des failles détectées</li>
                     </ul>
                   </div>
                   <button
                     type="button"
                     onClick={() => demarrerPaiement('pro')}
-                    className="mt-5 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition"
+                    className="mt-5 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition"
                   >
-                    Payer 100 FCFA par Mobile Money
+                    {t('modalPaiement.boutonPayer')} {formatPrix(100)}
                   </button>
                 </div>
 
                 {/* Pass PRO Illimité */}
-                <div className="p-5 rounded-2xl border border-slate-200 bg-white flex flex-col justify-between hover:border-slate-300 transition">
+                <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between hover:border-slate-700 transition">
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-base">Abonnement PRO</h3>
+                    <h3 className="font-extrabold text-white text-base">{t('modalPaiement.aboPro')}</h3>
                     <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-slate-900">1 000 FCFA</span>
-                      <span className="text-xs text-slate-500 font-medium">/ mois</span>
+                      <span className="text-3xl font-black text-white">{formatPrix(1000)}</span>
+                      <span className="text-xs text-slate-400 font-medium">{t('modalPaiement.aboProPeriode')}</span>
                     </div>
-                    <ul className="mt-3 space-y-1.5 text-xs text-slate-600">
-                      <li>✓ Analyses illimitées 24/7</li>
-                      <li>✓ Surveillance automatique quotidienne</li>
-                      <li>✓ Alertes email d'usurpation & failles</li>
+                    <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+                      <li>✓ {t('modalPaiement.aboProDesc')}</li>
                     </ul>
                   </div>
                   <button
                     type="button"
                     onClick={() => demarrerPaiement('pro')}
-                    className="mt-5 w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition"
+                    className="mt-5 w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition border border-slate-700"
                   >
-                    Souscrire PRO (1 000 FCFA)
+                    {t('modalPaiement.aboPro')} ({formatPrix(1000)})
                   </button>
                 </div>
               </div>
@@ -200,13 +199,13 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
 
           {etapePaiement === 'numero' && (
             <form onSubmit={validerPaiement100F} className="space-y-5 animate-fade-in">
-              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-md">
                   {methodeSelectionnee === 'moov' ? 'Moov' : methodeSelectionnee === 'celtis' ? 'Celtis' : 'MTN'}
                 </div>
                 <div>
-                  <div className="text-xs text-slate-500 font-bold uppercase">Montant du débit</div>
-                  <div className="text-2xl font-black text-blue-950">100 FCFA</div>
+                  <div className="text-xs text-slate-400 font-bold uppercase">Montant du débit</div>
+                  <div className="text-2xl font-black text-cyan-400">{formatPrix(100)}</div>
                 </div>
               </div>
 

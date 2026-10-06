@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /partage/
+Disallow: /tableau-de-bord
+Disallow: /profil
+Disallow: /admin/
+
+Sitemap: https://cyberguard.io/sitemap.xml

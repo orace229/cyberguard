@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import BanniereVerificationEmail from './BanniereVerificationEmail';
+import SelecteurLangueDevise from './SelecteurLangueDevise';
 import Logo from './Logo';
 import Footer from './Footer';
 
 export default function Layout() {
   const { utilisateur, seDeconnecter } = useAuth();
+  const { t } = useLanguage();
   const [menuOuvert, setMenuOuvert] = useState(false);
   const location = useLocation();
 
-  // Referme le menu mobile à chaque changement de page, pour ne pas le
-  // laisser ouvert par-dessus le nouveau contenu.
   useEffect(() => {
     setMenuOuvert(false);
   }, [location.pathname]);
@@ -33,26 +34,32 @@ export default function Layout() {
             {menuOuvert ? '✕' : '☰'}
           </button>
         </div>
+
+        {/* Widget Sélecteur de Langue & Devise */}
+        <div className="my-2 px-1">
+          <SelecteurLangueDevise />
+        </div>
+
         <nav>
           <NavLink to="/accueil" end>
-            Accueil
+            {t('nav.accueil')}
           </NavLink>
-          <NavLink to="/tableau-de-bord">Tableau de bord</NavLink>
-          <NavLink to="/analyses/nouvelle">Nouvelle analyse</NavLink>
-          <NavLink to="/historique">Historique</NavLink>
+          <NavLink to="/tableau-de-bord">{t('nav.tableauDeBord')}</NavLink>
+          <NavLink to="/analyses/nouvelle">{t('nav.nouvelleAnalyse')}</NavLink>
+          <NavLink to="/historique">{t('nav.historique')}</NavLink>
           <NavLink to="/tarifs">
-            Offres & Tarifs <span className="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-400 text-slate-900">PRO</span>
+            {t('nav.tarifs')} <span className="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-400 text-slate-900">PRO</span>
           </NavLink>
-          <NavLink to="/profil">Mon profil</NavLink>
+          <NavLink to="/profil">{t('nav.monProfil')}</NavLink>
           {utilisateur?.role === 'administrateur' && (
             <NavLink to="/admin/utilisateurs" className={() => (location.pathname.startsWith('/admin') ? 'active' : '')}>
-              Administration
+              {t('nav.admin')}
             </NavLink>
           )}
         </nav>
         <div className="barre-laterale-compte">
           <div className="flex flex-col gap-1 mb-2">
-            <span className="font-bold text-sm">{utilisateur?.nom}</span>
+            <span className="font-bold text-sm text-slate-100">{utilisateur?.nom}</span>
             <div className="flex items-center gap-1.5">
               <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
                 utilisateur?.plan === 'pro' || utilisateur?.plan === 'entreprise' || utilisateur?.role === 'administrateur'
@@ -64,7 +71,7 @@ export default function Layout() {
             </div>
           </div>
           <button type="button" onClick={seDeconnecter}>
-            Se déconnecter
+            {t('nav.deconnexion')}
           </button>
         </div>
       </aside>

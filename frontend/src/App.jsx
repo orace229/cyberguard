@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationsProvider } from './context/NotificationsContext';
+import { LanguageProvider } from './context/LanguageContext';
 import NotificationsToasts from './components/NotificationsToasts';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
@@ -22,9 +23,10 @@ import AdminStatsParametres from './pages/admin/AdminStatsParametres';
 
 function App() {
   return (
-    <AuthProvider>
-      <NotificationsProvider>
-        <NotificationsToasts />
+    <LanguageProvider>
+      <AuthProvider>
+        <NotificationsProvider>
+          <NotificationsToasts />
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
@@ -74,6 +76,7 @@ function App() {
         </Routes>
       </NotificationsProvider>
     </AuthProvider>
+    </LanguageProvider>
   );
 }
 
