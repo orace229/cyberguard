@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import BanniereVerificationEmail from './BanniereVerificationEmail';
 import Logo from './Logo';
+import Footer from './Footer';
 
 export default function Layout() {
   const { utilisateur, seDeconnecter } = useAuth();
@@ -70,6 +71,7 @@ export default function Layout() {
       <main>
         <BanniereVerificationEmail />
         <Outlet />
+        <Footer />
       </main>
     </div>
   );
