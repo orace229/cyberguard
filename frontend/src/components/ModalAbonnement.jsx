@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import apiClient from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre, message }) {
+  let authContext = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    authContext = useAuth();
+  } catch (e) {
+    // Rendu hors AuthProvider (tests unitaires)
+  }
+  const setUtilisateur = authContext?.setUtilisateur || (() => {});
   const [chargement, setChargement] = useState(false);
   const [etapePaiement, setEtapePaiement] = useState('choix'); // 'choix' | 'numero' | 'confirmation'
   const [methodeSelectionnee, setMethodeSelectionnee] = useState('moov');
@@ -23,13 +32,17 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
 
     try {
       // Simulation d'aller-retour USSD Gateway (Moov / Celtis / MTN)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1200));
 
       const res = await apiClient.post('/plan/changer', {
         plan: planSelectionne,
         methode_paiement: methodeSelectionnee,
         telephone: numeroTelephone,
       });
+
+      if (res.data.utilisateur) {
+        setUtilisateur(res.data.utilisateur);
+      }
 
       if (surSucces) {
         surSucces(res.data);

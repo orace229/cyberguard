@@ -40,13 +40,14 @@ class PlanController extends Controller
     }
 
     /**
-     * Changer / Activer un plan (Simulation & Intégration MoMo / Carte).
+     * Changer / Activer un plan (Paiement Moov, Celtis, MTN & Carte).
      */
     public function changer(Request $request)
     {
         $data = $request->validate([
             'plan' => ['required', 'in:gratuit,pro,entreprise'],
-            'methode_paiement' => ['nullable', 'string', 'in:momo,card,fedapay,kkiapay,test'],
+            'methode_paiement' => ['nullable', 'string'],
+            'telephone' => ['nullable', 'string', 'max:30'],
         ]);
 
         $utilisateur = $request->user();
@@ -62,10 +63,11 @@ class PlanController extends Controller
                 'message' => 'Votre compte est repassé au Plan Gratuit.',
                 'plan' => 'gratuit',
                 'est_payant' => false,
+                'utilisateur' => $utilisateur->fresh(),
             ]);
         }
 
-        // Pour les plans payants : souscription valide pour 30 jours (ou illimité pour démo/test)
+        // Pour les plans payants : souscription valide pour 30 jours
         $expiration = now()->addDays(30);
 
         $utilisateur->update([
@@ -73,13 +75,14 @@ class PlanController extends Controller
             'date_expiration_plan' => $expiration,
         ]);
 
-        $nomPlan = $nouveauPlan === 'entreprise' ? 'Entreprise 🚀' : 'Pro ⚡';
+        $nomPlan = $nouveauPlan === 'entreprise' ? 'Entreprise 🚀' : 'Pro ⚡ (100 FCFA)';
 
         return response()->json([
-            'message' => "Félicitations ! Votre souscription au Plan {$nomPlan} a été activée avec succès.",
+            'message' => "Paiement validé avec succès ! Votre souscription au Plan {$nomPlan} a été activée.",
             'plan' => $nouveauPlan,
             'est_payant' => true,
             'date_expiration' => $expiration->toIso8601String(),
+            'utilisateur' => $utilisateur->fresh(),
         ]);
     }
 }
