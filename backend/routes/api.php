@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AnalyseController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DeuxFacteursController;
 use App\Http\Controllers\Api\PartageController;
+use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\ProfilController;
 use App\Http\Controllers\Api\ReinitialisationMotDePasseController;
 use App\Http\Controllers\Api\SurveillanceController;
@@ -50,6 +51,9 @@ Route::middleware([EncryptCookies::class, StartSession::class])->group(function 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/deconnexion', [AuthController::class, 'logout']);
     Route::get('/moi', [AuthController::class, 'me']);
+
+    Route::get('/plan', [PlanController::class, 'afficher']);
+    Route::post('/plan/changer', [PlanController::class, 'changer']);
 
     Route::put('/profil', [ProfilController::class, 'update']);
     Route::put('/profil/mot-de-passe', [ProfilController::class, 'mettreAJourMotDePasse']);

@@ -15,6 +15,7 @@ import NouvelleAnalyse from './pages/NouvelleAnalyse';
 import ResultatAnalyse from './pages/ResultatAnalyse';
 import Historique from './pages/Historique';
 import MonProfil from './pages/MonProfil';
+import Tarifs from './pages/Tarifs';
 import AdminUtilisateurs from './pages/admin/AdminUtilisateurs';
 import AdminAnalyses from './pages/admin/AdminAnalyses';
 import AdminStatsParametres from './pages/admin/AdminStatsParametres';
@@ -43,6 +44,7 @@ function App() {
             <Route path="/analyses/nouvelle" element={<NouvelleAnalyse />} />
             <Route path="/analyses/:id" element={<ResultatAnalyse />} />
             <Route path="/historique" element={<Historique />} />
+            <Route path="/tarifs" element={<Tarifs />} />
             <Route path="/profil" element={<MonProfil />} />
             <Route
               path="/admin/utilisateurs"

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import { useNotifications } from '../context/NotificationsContext';
+import ModalAbonnement from '../components/ModalAbonnement';
 
 const ETAPES = [
   'Vérification HTTPS',
@@ -15,6 +16,7 @@ export default function NouvelleAnalyse() {
   const [url, setUrl] = useState('');
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState(null);
+  const [modalAbonnementOuverte, setModalAbonnementOuverte] = useState(false);
   const navigate = useNavigate();
   const { suivreAnalyse } = useNotifications();
 
@@ -29,7 +31,10 @@ export default function NouvelleAnalyse() {
       suivreAnalyse(data.id);
       navigate(`/analyses/${data.id}`);
     } catch (err) {
-      if (err.response?.status === 422) {
+      if (err.response?.status === 403 && err.response?.data?.code === 'QUOTA_ATTEINT') {
+        setErreur(err.response.data.message);
+        setModalAbonnementOuverte(true);
+      } else if (err.response?.status === 422) {
         setErreur(err.response.data.errors?.url?.[0] ?? err.response.data.message);
       } else {
         setErreur("Impossible de lancer l'analyse. Réessayez.");
@@ -75,6 +80,13 @@ export default function NouvelleAnalyse() {
           </p>
         </div>
       )}
+
+      <ModalAbonnement
+        ouvert={modalAbonnementOuverte}
+        surFermeture={() => setModalAbonnementOuverte(false)}
+        titre="Quota d'analyses gratuit atteint"
+        message="Vous avez utilisé votre analyse gratuite du mois. Passez au Plan PRO pour auditer autant de sites que vous souhaitez !"
+      />
     </section>
   );
 }

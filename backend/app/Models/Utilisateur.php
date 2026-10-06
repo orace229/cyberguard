@@ -30,6 +30,8 @@ class Utilisateur extends Authenticatable implements CanResetPasswordContract, M
         'mot_de_passe',
         'role',
         'statut',
+        'plan',
+        'date_expiration_plan',
         'email_verified_at',
         'deux_facteurs_secret',
         'deux_facteurs_active_le',
@@ -56,6 +58,7 @@ class Utilisateur extends Authenticatable implements CanResetPasswordContract, M
         return [
             'email_verified_at' => 'datetime',
             'date_inscription' => 'datetime',
+            'date_expiration_plan' => 'datetime',
             'mot_de_passe' => 'hashed',
             // Le secret TOTP est chiffré au repos : une fuite de la base ne
             // suffit pas à elle seule à générer des codes valides.
@@ -81,6 +84,42 @@ class Utilisateur extends Authenticatable implements CanResetPasswordContract, M
     public function estAdministrateur(): bool
     {
         return $this->role === 'administrateur';
+    }
+
+    public function estPlanPayant(): bool
+    {
+        if ($this->estAdministrateur()) {
+            return true;
+        }
+
+        if (in_array($this->plan, ['pro', 'entreprise'], true)) {
+            return $this->date_expiration_plan === null || $this->date_expiration_plan->isFuture();
+        }
+
+        return false;
+    }
+
+    public function estPro(): bool
+    {
+        return $this->estPlanPayant() && $this->plan === 'pro';
+    }
+
+    public function estEntreprise(): bool
+    {
+        return $this->estPlanPayant() && $this->plan === 'entreprise';
+    }
+
+    public function analysesRestantesCeMois(): int
+    {
+        if ($this->estPlanPayant()) {
+            return 999999;
+        }
+
+        $effectuees = $this->analyses()
+            ->where('date_analyse', '>=', now()->startOfMonth())
+            ->count();
+
+        return max(0, 1 - $effectuees);
     }
 
     public function deuxFacteursActif(): bool

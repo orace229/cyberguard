@@ -39,6 +39,9 @@ export default function Layout() {
           <NavLink to="/tableau-de-bord">Tableau de bord</NavLink>
           <NavLink to="/analyses/nouvelle">Nouvelle analyse</NavLink>
           <NavLink to="/historique">Historique</NavLink>
+          <NavLink to="/tarifs">
+            Offres & Tarifs <span className="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-400 text-slate-900">PRO</span>
+          </NavLink>
           <NavLink to="/profil">Mon profil</NavLink>
           {utilisateur?.role === 'administrateur' && (
             <NavLink to="/admin/utilisateurs" className={() => (location.pathname.startsWith('/admin') ? 'active' : '')}>
@@ -47,7 +50,18 @@ export default function Layout() {
           )}
         </nav>
         <div className="barre-laterale-compte">
-          <span>{utilisateur?.nom}</span>
+          <div className="flex flex-col gap-1 mb-2">
+            <span className="font-bold text-sm">{utilisateur?.nom}</span>
+            <div className="flex items-center gap-1.5">
+              <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                utilisateur?.plan === 'pro' || utilisateur?.plan === 'entreprise' || utilisateur?.role === 'administrateur'
+                  ? 'bg-amber-400 text-slate-900 border border-amber-500'
+                  : 'bg-slate-700 text-slate-300'
+              }`}>
+                {utilisateur?.role === 'administrateur' ? 'ADMIN PRO ⚡' : utilisateur?.plan === 'pro' ? 'PRO ⚡' : utilisateur?.plan === 'entreprise' ? 'ENTREPRISE 🚀' : 'PLAN GRATUIT'}
+              </span>
+            </div>
+          </div>
           <button type="button" onClick={seDeconnecter}>
             Se déconnecter
           </button>

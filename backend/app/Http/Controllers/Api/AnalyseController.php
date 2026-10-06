@@ -75,6 +75,19 @@ class AnalyseController extends Controller
      */
     public function store(Request $request)
     {
+        $utilisateur = $request->user();
+
+        // Contrôle du quota selon le plan :
+        // Plan Gratuit : 1 analyse gratuite par mois.
+        // Plan Pro / Entreprise : Illimité.
+        if ($utilisateur->analysesRestantesCeMois() <= 0) {
+            return response()->json([
+                'message' => 'Quota du Plan Gratuit atteint (1 analyse/mois). Passez au Plan Pro pour exécuter des analyses illimitées et activer la surveillance 24/7.',
+                'code' => 'QUOTA_ATTEINT',
+                'plan_actuel' => 'gratuit',
+            ], 403);
+        }
+
         // Un utilisateur qui saisit juste "exemple.bj" (sans schéma) ne doit
         // pas se heurter à une erreur de validation obscure : on suppose
         // HTTPS par défaut, comme le fait déjà le service d'analyse lorsqu'il
@@ -88,21 +101,12 @@ class AnalyseController extends Controller
             'url' => ['required', 'string', 'max:255', 'url'],
         ]);
 
-        // Pas de vérification DNS ici : dns_get_record() est un appel réseau
-        // bloquant et sans timeout, qui peut retarder la réponse HTTP de
-        // plusieurs secondes. Le contrôle anti-SSRF (hoteEstAutorise) est
-        // déjà refait dans TraiterAnalyseJob avant toute vérification —
-        // une URL refusée est simplement traitée en tâche de fond et
-        // ressort avec statut "echec", sans bloquer l'utilisateur au clic.
-        $analyse = $request->user()->analyses()->create([
+        $analyse = $utilisateur->analyses()->create([
             'url' => $data['url'],
             'date_analyse' => now(),
             'statut' => 'en_cours',
         ]);
 
-        // Le traitement (requêtes réseau qui peuvent prendre 10-20s) est
-        // délégué à une file d'attente pour ne pas bloquer la requête HTTP
-        // de l'utilisateur : le frontend interroge périodiquement le statut.
         TraiterAnalyseJob::dispatch($analyse);
 
         return response()->json($analyse, 202);
@@ -124,6 +128,16 @@ class AnalyseController extends Controller
     public function telechargerRapport(Request $request, Analyse $analyse)
     {
         $this->autoriserAcces($request, $analyse);
+
+        $utilisateur = $request->user();
+
+        // Le téléchargement du PDF certifié officiel est réservé aux membres Pro et Entreprise
+        if (! $utilisateur->estPlanPayant()) {
+            return response()->json([
+                'message' => 'Le téléchargement du rapport PDF complet et certifié est réservé aux membres CyberGuard Pro.',
+                'code' => 'RESERVE_PRO',
+            ], 403);
+        }
 
         if (! $analyse->chemin_rapport_pdf || ! Storage::disk('local')->exists($analyse->chemin_rapport_pdf)) {
             abort(404, 'Rapport non disponible pour cette analyse.');
