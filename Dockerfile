@@ -43,8 +43,15 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} storage/logs boots
 COPY backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+# Variables d'environnement par défaut prêtes à l'emploi
 ENV PORT=10000
 ENV PHP_CLI_SERVER_WORKERS=4
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV APP_KEY=base64:vFJ2uTLOeoOt6R/Ct3b20qdUn6TgQgNzTJipP+PXyk8=
+ENV DB_CONNECTION=sqlite
+ENV QUEUE_CONNECTION=sync
+ENV RUN_MIGRATIONS=true
 
 EXPOSE 10000
 
