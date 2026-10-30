@@ -5,11 +5,11 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --ignore-platform-req=php+
 COPY . .
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --no-dev --ignore-platform-req=php+
 
-FROM php:8.2-cli
+FROM php:8.4-cli
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev unzip \

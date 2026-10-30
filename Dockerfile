@@ -16,12 +16,12 @@ RUN npm run build
 FROM composer:2 AS composer-builder
 WORKDIR /app
 COPY backend/composer*.json ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --ignore-platform-req=php+
 COPY backend/ ./
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --no-dev --ignore-platform-req=php+
 
-# Étape 3 : Image finale de production (PHP 8.2 CLI)
-FROM php:8.2-cli
+# Étape 3 : Image finale de production (PHP 8.4 CLI)
+FROM php:8.4-cli
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev unzip \
