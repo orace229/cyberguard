@@ -1,25 +1,13 @@
 services:
-  # 1. Frontend Web App (React + Nginx - 100% Gratuit sans carte bancaire)
+  # CyberGuard Bénin - Application Tout-en-un (Frontend React + Backend Laravel)
+  # 100% Gratuit, 1 seul service Web, 0 frais, sans carte bancaire
   - type: web
-    name: cyberguard-frontend
+    name: cyberguard-app
     env: docker
     plan: free
-    dockerContext: ./frontend
+    dockerContext: .
     dockerfilePath: Dockerfile
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: cyberguard-backend
-          property: host
-
-  # 2. Backend API + Queue Worker (Laravel 11 - 100% Gratuit sans carte bancaire)
-  - type: web
-    name: cyberguard-backend
-    env: docker
-    plan: free
-    dockerContext: ./backend
-    dockerfilePath: Dockerfile
+    healthCheckPath: /api/sante
     envVars:
       - key: PORT
         value: "10000"
@@ -29,21 +17,6 @@ services:
         value: "false"
       - key: APP_KEY
         value: "base64:vFJ2uTLOeoOt6R/Ct3b20qdUn6TgQgNzTJipP+PXyk8="
-      - key: APP_URL
-        fromService:
-          type: web
-          name: cyberguard-backend
-          property: host
-      - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: cyberguard-frontend
-          property: host
-      - key: SANCTUM_STATEFUL_DOMAINS
-        fromService:
-          type: web
-          name: cyberguard-frontend
-          property: host
       - key: DB_CONNECTION
         value: sqlite
       - key: QUEUE_CONNECTION

@@ -24,7 +24,7 @@ return [
     // tolère donc une petite plage de ports locaux plutôt qu'un seul,
     // pour éviter un blocage CORS déroutant selon le port réellement utilisé.
     'allowed_origins' => array_unique([
-        env('FRONTEND_URL', 'http://localhost:5173'),
+        env('RENDER_EXTERNAL_URL', env('FRONTEND_URL', 'http://localhost:5173')),
         'http://localhost:5173',
         'http://localhost:5174',
         'http://localhost:5175',

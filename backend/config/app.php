@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('RENDER_EXTERNAL_URL', env('APP_URL', 'http://localhost')),
 
     /*
     |--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    'frontend_url' => env('RENDER_EXTERNAL_URL', env('FRONTEND_URL', env('APP_URL', 'http://localhost:5173'))),
 
     /*
     |--------------------------------------------------------------------------

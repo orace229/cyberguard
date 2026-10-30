@@ -16,6 +16,9 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
+// Healthcheck pour Render / monitoring
+Route::get('/sante', fn () => response()->json(['statut' => 'ok', 'app' => 'CyberGuard']));
+
 // Limitation de débit sur les routes sensibles : freine le brute-force sur
 // l'authentification et le spam d'emails de réinitialisation.
 Route::post('/inscription', [AuthController::class, 'register'])->middleware('throttle:6,1');
