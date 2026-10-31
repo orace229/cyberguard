@@ -27,15 +27,15 @@ function GraphiqueEvolution({ evolution }) {
     <svg viewBox={`0 0 ${largeur} ${hauteur}`} width="100%" height={hauteur} preserveAspectRatio="none">
       <defs>
         <linearGradient id="degrade-zone" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0054CB" stopOpacity="0.16" />
-          <stop offset="100%" stopColor="#0054CB" stopOpacity="0" />
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <line x1={marge} y1={hauteur - marge} x2={largeur - marge} y2={hauteur - marge} stroke="#C4C6D0" />
+      <line x1={marge} y1={hauteur - marge} x2={largeur - marge} y2={hauteur - marge} stroke="#334155" />
       <path d={zone} fill="url(#degrade-zone)" stroke="none" />
-      <path d={chemin} fill="none" stroke="#002452" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={chemin} fill="none" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="4" fill="#FFFFFF" stroke="#0054CB" strokeWidth="2.5" />
+        <circle key={i} cx={p.x} cy={p.y} r="4.5" fill="#090d16" stroke="#38bdf8" strokeWidth="2.5" />
       ))}
     </svg>
   );
