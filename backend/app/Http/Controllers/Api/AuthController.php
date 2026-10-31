@@ -31,10 +31,16 @@ class AuthController extends Controller
             'mot_de_passe' => Hash::make($data['mot_de_passe']),
         ]);
 
-        $utilisateur->sendEmailVerificationNotification();
+        try {
+            $utilisateur->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         Auth::login($utilisateur);
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         return response()->json($utilisateur, 201);
     }
