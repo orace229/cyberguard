@@ -9,10 +9,10 @@ if [ ! -f .env ]; then
     cp .env.example .env || true
 fi
 
-# Garantit la présence d'une clé d'application si elle n'est pas fournie par l'environnement
-if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
-    export APP_KEY="base64:vFJ2uTLOeoOt6R/Ct3b20qdUn6TgQgNzTJipP+PXyk8="
-fi
+# Remplace toute clé vide dans le fichier .env
+sed -i 's/^APP_KEY=$/APP_KEY=base64:vFJ2uTLOeoOt6R\/Ct3b20qdUn6TgQgNzTJipP+PXyk8=/' .env 2>/dev/null || true
+
+export APP_KEY="${APP_KEY:-base64:vFJ2uTLOeoOt6R/Ct3b20qdUn6TgQgNzTJipP+PXyk8=}"
 
 php artisan config:clear
 php artisan route:clear
