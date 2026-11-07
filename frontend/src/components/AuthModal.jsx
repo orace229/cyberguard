@@ -64,7 +64,13 @@ export default function AuthModal({ onFermer }) {
       if (resultat.deux_facteurs_requis) {
         setEtapeConnexion('code');
       } else {
-        navigate('/accueil');
+        if (onFermer) onFermer();
+        const pending = localStorage.getItem('cyberguard_pending_url');
+        if (pending) {
+          navigate('/analyses/nouvelle');
+        } else {
+          navigate('/tableau-de-bord');
+        }
       }
     } catch (err) {
       traiterErreur(err);
@@ -81,7 +87,13 @@ export default function AuthModal({ onFermer }) {
     const donnees = new FormData(e.target);
     try {
       await validerCodeConnexion(donnees.get('code'));
-      navigate('/accueil');
+      if (onFermer) onFermer();
+      const pending = localStorage.getItem('cyberguard_pending_url');
+      if (pending) {
+        navigate('/analyses/nouvelle');
+      } else {
+        navigate('/tableau-de-bord');
+      }
     } catch (err) {
       traiterErreur(err);
     } finally {
@@ -102,7 +114,13 @@ export default function AuthModal({ onFermer }) {
         mot_de_passe: donnees.get('mot_de_passe'),
         mot_de_passe_confirmation: donnees.get('mot_de_passe_confirmation'),
       });
-      navigate('/accueil');
+      if (onFermer) onFermer();
+      const pending = localStorage.getItem('cyberguard_pending_url');
+      if (pending) {
+        navigate('/analyses/nouvelle');
+      } else {
+        navigate('/tableau-de-bord');
+      }
     } catch (err) {
       traiterErreur(err);
     } finally {
