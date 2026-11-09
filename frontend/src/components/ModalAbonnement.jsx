@@ -14,7 +14,7 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
   const setUtilisateur = authContext?.setUtilisateur || (() => {});
   const { formatPrix, t } = useLanguage();
   const [chargement, setChargement] = useState(false);
-  const [etapePaiement, setEtapePaiement] = useState('choix'); // 'choix' | 'numero' | 'confirmation'
+  const [etapePaiement, setEtapePaiement] = useState('choix'); // 'choix' | 'numero'
   const [methodeSelectionnee, setMethodeSelectionnee] = useState('moov');
   const [numeroTelephone, setNumeroTelephone] = useState('');
   const [planSelectionne, setPlanSelectionne] = useState('pro');
@@ -33,8 +33,7 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
     setErreur(null);
 
     try {
-      // Simulation d'aller-retour USSD Gateway (Moov / Celtis / MTN)
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const res = await apiClient.post('/plan/changer', {
         plan: planSelectionne,
@@ -59,208 +58,197 @@ export default function ModalAbonnement({ ouvert, surFermeture, surSucces, titre
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fade-in">
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
-        {/* Header avec dégradé CyberGuard Bénin */}
-        <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 px-6 py-6 text-white relative">
-          <button
-            onClick={() => {
-              setEtapePaiement('choix');
-              surFermeture();
-            }}
-            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition"
-            aria-label="Fermer"
-          >
-            ✕
-          </button>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold uppercase tracking-wider mb-2 border border-amber-400/30">
-            🔒 Guichet de Paiement Sécurisé (Bénin)
-          </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">
-            {titre || 'Débloquez l\'analyse complète (100 FCFA)'}
-          </h2>
-          <p className="text-slate-300 text-xs mt-1">
-            {message || 'Accédez aux rapports PDF certifiés, aux 7 points de contrôle et à la surveillance 24/7.'}
-          </p>
-        </div>
+    <div className="modal-scrim" role="presentation" onClick={surFermeture}>
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: '520px', padding: '24px' }}
+      >
+        <button
+          className="modal-fermer"
+          onClick={() => {
+            setEtapePaiement('choix');
+            surFermeture();
+          }}
+          aria-label="Fermer"
+        >
+          ×
+        </button>
 
-        {/* Corps de la modale */}
-        <div className="p-6 space-y-6">
-          {erreur && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
-              {erreur}
-            </div>
-          )}
+        <span className="etiquette" style={{ marginBottom: '8px' }}>
+          Guichet de Paiement Sécurisé
+        </span>
+        <h2 style={{ fontSize: '22px', margin: '4px 0 6px', color: 'var(--text-h)' }}>
+          {titre || 'Pass CyberGuard (100 FCFA)'}
+        </h2>
+        <p style={{ fontSize: '13.5px', color: 'var(--text)', margin: '0 0 20px' }}>
+          {message || 'Débloquez le rapport PDF certifié et le plan d’action prioritaire pour 100 FCFA par Mobile Money.'}
+        </p>
 
-          {etapePaiement === 'choix' && (
-            <div className="space-y-6">
-              {/* Choix des opérateurs de paiement anonymisés */}
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-3">
-                  Choisissez votre opérateur au Bénin
-                </label>
-                <div className="grid grid-cols-3 gap-3">
+        {erreur && <p className="erreur-generale">{erreur}</p>}
+
+        {etapePaiement === 'choix' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                Opérateur Mobile Money au Bénin
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                {[
+                  { id: 'moov', nom: 'Moov Money', couleur: '#1d4ed8', bg: '#eff6ff' },
+                  { id: 'celtis', nom: 'Celtis Cash', couleur: '#15803d', bg: '#f0fdf4' },
+                  { id: 'mtn', nom: 'MTN MoMo', couleur: '#a16207', bg: '#fefce8' },
+                ].map((op) => (
                   <button
+                    key={op.id}
                     type="button"
-                    onClick={() => setMethodeSelectionnee('moov')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition ${
-                      methodeSelectionnee === 'moov'
-                        ? 'border-blue-600 bg-blue-50/60 text-blue-900 font-bold shadow-sm'
-                        : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                    }`}
+                    onClick={() => setMethodeSelectionnee(op.id)}
+                    style={{
+                      padding: '12px 8px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px',
+                      background: methodeSelectionnee === op.id ? op.bg : 'var(--card-bg)',
+                      border: methodeSelectionnee === op.id ? `2px solid ${op.couleur}` : '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
+                      color: methodeSelectionnee === op.id ? op.couleur : 'var(--text-h)',
+                      cursor: 'pointer',
+                    }}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-sm shadow-md">
-                      Moov
-                    </div>
-                    <span className="text-xs font-bold mt-2">Moov Money</span>
+                    <span style={{ fontWeight: 800, fontSize: '14px' }}>{op.nom.split(' ')[0]}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 600 }}>{op.nom}</span>
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setMethodeSelectionnee('celtis')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition ${
-                      methodeSelectionnee === 'celtis'
-                        ? 'border-emerald-600 bg-emerald-50/60 text-emerald-900 font-bold shadow-sm'
-                        : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                    }`}
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow-md">
-                      Celtis
-                    </div>
-                    <span className="text-xs font-bold mt-2">Celtis Cash</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setMethodeSelectionnee('mtn')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition ${
-                      methodeSelectionnee === 'mtn'
-                        ? 'border-amber-500 bg-amber-50/60 text-amber-950 font-bold shadow-sm'
-                        : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                    }`}
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-900 font-black flex items-center justify-center text-sm shadow-md">
-                      MTN
-                    </div>
-                    <span className="text-xs font-bold mt-2">MTN MoMo</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Formules de prix ultra-accessibles avec conversion de devises */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Pass 1 Analyse */}
-                <div className="p-5 rounded-2xl border-2 border-blue-600 bg-slate-900/60 flex flex-col justify-between shadow-sm relative">
-                  <span className="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                    {t('modalPaiement.passUnique')}
-                  </span>
-                  <div>
-                    <h3 className="font-extrabold text-white text-base">{t('modalPaiement.passUnique')}</h3>
-                    <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-cyan-400">{formatPrix(100)}</span>
-                    </div>
-                    <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
-                      <li>✓ {t('modalPaiement.passUniqueDesc')}</li>
-                      <li>✓ Téléchargement du PDF Certifié</li>
-                    </ul>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => demarrerPaiement('pro')}
-                    className="mt-5 w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition"
-                  >
-                    {t('modalPaiement.boutonPayer')} {formatPrix(100)}
-                  </button>
-                </div>
-
-                {/* Pass PRO Illimité */}
-                <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between hover:border-slate-700 transition">
-                  <div>
-                    <h3 className="font-extrabold text-white text-base">{t('modalPaiement.aboPro')}</h3>
-                    <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-white">{formatPrix(1000)}</span>
-                      <span className="text-xs text-slate-400 font-medium">{t('modalPaiement.aboProPeriode')}</span>
-                    </div>
-                    <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
-                      <li>✓ {t('modalPaiement.aboProDesc')}</li>
-                    </ul>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => demarrerPaiement('pro')}
-                    className="mt-5 w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition border border-slate-700"
-                  >
-                    {t('modalPaiement.aboPro')} ({formatPrix(1000)})
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
-          )}
 
-          {etapePaiement === 'numero' && (
-            <form onSubmit={validerPaiement100F} className="space-y-5 animate-fade-in">
-              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-md">
-                  {methodeSelectionnee === 'moov' ? 'Moov' : methodeSelectionnee === 'celtis' ? 'Celtis' : 'MTN'}
-                </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{
+                padding: '16px',
+                border: '2px solid var(--accent)',
+                borderRadius: 'var(--radius)',
+                background: 'var(--card-bg)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: 'var(--shadow)',
+              }}>
                 <div>
-                  <div className="text-xs text-slate-400 font-bold uppercase">Montant du débit</div>
-                  <div className="text-2xl font-black text-cyan-400">{formatPrix(100)}</div>
+                  <span className="pill actif" style={{ fontSize: '10px', marginBottom: '6px' }}>Instantané</span>
+                  <h4 style={{ margin: '4px 0', fontSize: '16px', color: 'var(--text-h)' }}>Pass Unique</h4>
+                  <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--brand-navy)', margin: '8px 0' }}>
+                    {formatPrix(100)}
+                  </div>
+                  <p style={{ fontSize: '12px', color: 'var(--text)', margin: 0 }}>
+                    Rapport PDF Officiel & Recommandations.
+                  </p>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-2">
-                  Entrez votre numéro de téléphone {methodeSelectionnee.toUpperCase()}
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                    🇧🇯 +229
-                  </span>
-                  <input
-                    type="tel"
-                    placeholder="01 23 45 67 89"
-                    value={numeroTelephone}
-                    onChange={(e) => setNumeroTelephone(e.target.value)}
-                    required
-                    className="w-full pl-24 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1.5">
-                  📲 Vous recevrez une demande de confirmation USSD directement sur votre téléphone portable.
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setEtapePaiement('choix')}
-                  className="w-1/3 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition"
+                  onClick={() => demarrerPaiement('pro')}
+                  style={{ marginTop: '16px', width: '100%', padding: '10px' }}
                 >
-                  Retour
-                </button>
-                <button
-                  type="submit"
-                  disabled={chargement}
-                  className="w-2/3 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {chargement ? (
-                    <>
-                      <span className="animate-spin text-sm">⏳</span> Validation USSD en cours...
-                    </>
-                  ) : (
-                    'Confirmer le paiement de 100 FCFA'
-                  )}
+                  Payer {formatPrix(100)}
                 </button>
               </div>
-            </form>
-          )}
 
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-            <span>🛡️ Passerelle cryptée SSL 256-bit</span>
-            <span>Référence : BJ-{Math.floor(Math.random() * 899999 + 100000)}</span>
+              <div style={{
+                padding: '16px',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius)',
+                background: 'var(--card-bg)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}>
+                <div>
+                  <span className="pill" style={{ fontSize: '10px', marginBottom: '6px' }}>Illimité</span>
+                  <h4 style={{ margin: '4px 0', fontSize: '16px', color: 'var(--text-h)' }}>Abonnement PRO</h4>
+                  <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--text-h)', margin: '8px 0' }}>
+                    {formatPrix(1000)} <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--text)' }}>/ mois</span>
+                  </div>
+                  <p style={{ fontSize: '12px', color: 'var(--text)', margin: 0 }}>
+                    Analyses illimitées 24/7 & surveillance continue.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="secondaire"
+                  onClick={() => demarrerPaiement('pro')}
+                  style={{ marginTop: '16px', width: '100%', padding: '10px' }}
+                >
+                  Souscrire ({formatPrix(1000)})
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {etapePaiement === 'numero' && (
+          <form onSubmit={validerPaiement100F} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{
+              padding: '14px',
+              borderRadius: 'var(--radius)',
+              background: 'var(--accent-bg)',
+              border: '1px solid var(--accent-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-ink)', textTransform: 'uppercase' }}>
+                  Opérateur : {methodeSelectionnee.toUpperCase()}
+                </span>
+                <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--brand-navy)' }}>
+                  {formatPrix(100)}
+                </div>
+              </div>
+              <span style={{ fontSize: '24px' }}>📱</span>
+            </div>
+
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13.5px', color: 'var(--text-h)', fontWeight: 600 }}>
+              Numéro de téléphone ({methodeSelectionnee.toUpperCase()} Bénin)
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ padding: '9px 12px', background: 'var(--social-bg)', borderRadius: 'var(--radius)', fontWeight: 700, fontSize: '14px', border: '1px solid var(--border)' }}>
+                  🇧🇯 +229
+                </span>
+                <input
+                  type="tel"
+                  placeholder="Ex : 01 23 45 67 89"
+                  value={numeroTelephone}
+                  onChange={(e) => setNumeroTelephone(e.target.value)}
+                  required
+                  style={{ flex: 1 }}
+                />
+              </div>
+            </label>
+
+            <p style={{ fontSize: '12px', color: 'var(--text)', margin: 0 }}>
+              📲 Un message USSD de confirmation sera envoyé sur votre téléphone pour valider le débit de 100 FCFA.
+            </p>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button
+                type="button"
+                className="secondaire"
+                onClick={() => setEtapePaiement('choix')}
+                style={{ flex: 1 }}
+              >
+                ← Retour
+              </button>
+              <button
+                type="submit"
+                disabled={chargement}
+                style={{ flex: 2 }}
+              >
+                {chargement ? 'Validation USSD…' : 'Confirmer le paiement de 100 FCFA'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

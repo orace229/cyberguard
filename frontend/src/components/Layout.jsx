@@ -22,7 +22,7 @@ export default function Layout() {
       <aside className={`barre-laterale${menuOuvert ? ' ouverte' : ''}`}>
         <div className="barre-laterale-entete">
           <NavLink to="/accueil" className="logo">
-            <Logo taille={38} />
+            <Logo taille={34} />
           </NavLink>
           <button
             type="button"
@@ -35,8 +35,8 @@ export default function Layout() {
           </button>
         </div>
 
-        {/* Widget Sélecteur de Langue & Devise */}
-        <div className="my-2 px-1">
+        {/* Sélecteur de langue & devise */}
+        <div style={{ margin: '8px 0' }}>
           <SelecteurLangueDevise />
         </div>
 
@@ -47,9 +47,7 @@ export default function Layout() {
           <NavLink to="/tableau-de-bord">{t('nav.tableauDeBord')}</NavLink>
           <NavLink to="/analyses/nouvelle">{t('nav.nouvelleAnalyse')}</NavLink>
           <NavLink to="/historique">{t('nav.historique')}</NavLink>
-          <NavLink to="/tarifs">
-            {t('nav.tarifs')} <span className="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-400 text-slate-900">PRO</span>
-          </NavLink>
+          <NavLink to="/tarifs">{t('nav.tarifs')}</NavLink>
           <NavLink to="/profil">{t('nav.monProfil')}</NavLink>
           {utilisateur?.role === 'administrateur' && (
             <NavLink to="/admin/utilisateurs" className={() => (location.pathname.startsWith('/admin') ? 'active' : '')}>
@@ -57,24 +55,20 @@ export default function Layout() {
             </NavLink>
           )}
         </nav>
+
         <div className="barre-laterale-compte">
-          <div className="flex flex-col gap-1 mb-2">
-            <span className="font-bold text-sm text-slate-100">{utilisateur?.nom}</span>
-            <div className="flex items-center gap-1.5">
-              <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                utilisateur?.plan === 'pro' || utilisateur?.plan === 'entreprise' || utilisateur?.role === 'administrateur'
-                  ? 'bg-amber-400 text-slate-900 border border-amber-500'
-                  : 'bg-slate-700 text-slate-300'
-              }`}>
-                {utilisateur?.role === 'administrateur' ? 'ADMIN PRO ⚡' : utilisateur?.plan === 'pro' ? 'PRO ⚡' : utilisateur?.plan === 'entreprise' ? 'ENTREPRISE 🚀' : 'PLAN GRATUIT'}
-              </span>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <strong style={{ color: 'var(--text-h)', fontSize: '15px' }}>{utilisateur?.nom}</strong>
+            <span className="pill" style={{ width: 'fit-content', fontSize: '12px' }}>
+              {utilisateur?.role === 'administrateur' ? 'Administrateur ⚡' : utilisateur?.plan === 'pro' ? 'Membre PRO ⚡' : 'Plan Gratuit'}
+            </span>
           </div>
-          <button type="button" onClick={seDeconnecter}>
+          <button type="button" className="secondaire" onClick={seDeconnecter}>
             {t('nav.deconnexion')}
           </button>
         </div>
       </aside>
+
       <main>
         <BanniereVerificationEmail />
         <Outlet />
