@@ -65,10 +65,14 @@ export default function Accueil() {
       {/* 1. Navbar Institutionnelle & Professionnelle */}
       <nav className="nav-accueil">
         <Logo taille={34} />
+
         <div className="nav-accueil-liens">
           <a href="#avantages">Avantages</a>
           <a href="#piliers">7 Piliers d'Audit</a>
           <a href="#tarifs">Tarifs (100 FCFA)</a>
+        </div>
+
+        <div className="nav-accueil-actions">
           <SelecteurLangueDevise />
           <button
             type="button"

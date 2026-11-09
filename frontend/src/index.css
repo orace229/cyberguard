@@ -2007,3 +2007,97 @@ button:active:not(:disabled) {
   margin: 0;
   opacity: 0.8;
 }
+
+
+/* ===================== Navigation Accueil Ordonnée & Sélecteur ===================== */
+.nav-accueil {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 32px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  background: var(--card-bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  gap: 16px !important;
+}
+.nav-accueil-liens {
+  display: flex !important;
+  align-items: center !important;
+  gap: 24px !important;
+  flex: 1 !important;
+  margin-left: 28px !important;
+}
+.nav-accueil-liens a {
+  color: var(--text) !important;
+  text-decoration: none !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  transition: color 0.15s ease !important;
+}
+.nav-accueil-liens a:hover {
+  color: var(--brand-navy) !important;
+}
+.nav-accueil-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+}
+.nav-accueil-actions button {
+  white-space: nowrap !important;
+  padding: 9px 18px !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+}
+.nav-accueil-actions button.secondaire {
+  padding: 8px 16px !important;
+}
+
+/* ===================== Sélecteur compact de langue & devise ===================== */
+.selecteur-langue-devise-barre {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+.select-langue-compact,
+.select-devise-compact {
+  font-family: var(--sans) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--text-h) !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: 6px 8px !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: border-color 0.15s ease !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+}
+.select-langue-compact:hover,
+.select-devise-compact:hover {
+  border-color: var(--brand-navy) !important;
+}
+.select-langue-compact:focus,
+.select-devise-compact:focus {
+  border-color: var(--accent) !important;
+  box-shadow: var(--shadow-glow) !important;
+}
+
+@media (max-width: 860px) {
+  .nav-accueil {
+    padding: 12px 16px !important;
+    flex-wrap: wrap !important;
+  }
+  .nav-accueil-liens {
+    display: none !important;
+  }
+}
